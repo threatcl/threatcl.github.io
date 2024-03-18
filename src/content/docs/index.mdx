@@ -1,0 +1,64 @@
+---
+title: threatcl
+description: Get started building your docs site with Starlight.
+template: splash
+hero:
+  tagline: threat modelling configuration language with hcl
+  image:
+    file: ../../assets/threatcl.png
+  actions:
+    - text: Go to the docs
+      link: /threatcl/overview/
+      icon: right-arrow
+      variant: primary
+    - text: Go to the source
+      link: https://github.com/threatcl/threatcl
+      icon: github
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+import { Code } from '@astrojs/starlight/components';
+import { Steps } from '@astrojs/starlight/components';
+import importedHcl from '/src/tower-of-london.hcl?raw';
+
+## Getting started
+
+<Card title="Install threatcl" icon="star">
+  <Steps>
+
+1. Install with homebrew:
+
+   ```bash
+   brew install threatcl/repo/threatcl
+   ```
+
+2. Or, install with go:
+
+   ```bash
+   go install github.com/threatcl/threatcl/cmd/threatcl@latest
+   ```
+
+3. Or, run with docker:
+
+   ```bash
+   docker run --rm -it ghcr.io/threatcl/threatcl
+   ```
+
+4. Or, integrate with GitHub Actions:
+
+	<LinkCard title="github.com/threatcl/threatcl-action" icon="github" description="Learn more here" href="https://github.com/threatcl/threatcl-action" />
+  </Steps>
+</Card>
+	<Card title="Document your threat model" icon="seti:default">
+    <Code code={importedHcl} lang="hcl" title="tower-of-london.hcl" />
+	</Card>
+<CardGrid>
+	<Card title="Validate your threat model" icon="approve-check">
+    ```bash
+    threatcl validate tower-of-london.hcl
+    ```
+	</Card>
+	<Card title="Learn more" icon="document">
+    Learn more about the threatcl spec here, and how to start building threat models with threatcl
+	</Card>
+</CardGrid>

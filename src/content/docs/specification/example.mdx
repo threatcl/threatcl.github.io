@@ -1,0 +1,25 @@
+---
+title: Example Threat Model
+---
+
+import { Code } from '@astrojs/starlight/components';
+import importedHcl from '/src/tower-of-london.hcl?raw';
+
+The following is a lightweight example of a `threatcl` HCL file. The specification is built off HCLv2 - if you've ever written [terraform](https://www.terraform.io), this may seem familar to you. See [developer.hashicorp.com](https://developer.hashicorp.com/terraform/language/syntax/configuration) for more high level information about the syntax.
+
+<Code code={importedHcl} lang="hcl" title="tower-of-london.hcl" />
+
+The minimum requirements for a `.hcl` file to meet `threatcl`'s requirements is to include a `spec_version` string, at least one `threatmodel` block.
+
+You need to give each `threatmodel` block a name.
+
+The only requirement element inside each `threatmodel` is an `author` string.
+
+This is a valid threat model:
+
+```hcl
+spec_version = "0.1.9"
+threatmodel "threatmodel name" {
+  author = "christian"
+}
+```
