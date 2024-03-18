@@ -7,7 +7,7 @@ export default defineConfig({
   base: '/docs',
 	integrations: [
 		starlight({
-			title: 'threatcl docs',
+			title: 'threatcl',
 			social: {
 				github: 'https://github.com/threatcl/threatcl',
 			},
