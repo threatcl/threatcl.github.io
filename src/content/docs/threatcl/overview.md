@@ -36,6 +36,7 @@ Combining the `threatcl` cli software and the `threatcl` spec allows practitione
 ### Example threat model
 
 ```hcl
+// threatmodel.hcl
 threatmodel "Tower of London" {
   description = "A historic castle"
   author = "@xntrik"

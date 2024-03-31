@@ -1,0 +1,31 @@
+---
+title: External HCL Files
+---
+
+In both the [imports](/specification/threatmodel/#imports) and [including](/specification/threatmodel/#including) attributes you can refer to other files in a few ways.
+
+## Local file reference
+
+You can refer to a local file simply by providing the path to the file.
+
+```hcl
+including = "shared/city-threatmodel.hcl"
+```
+
+## Remote file reference
+
+`threatcl` uses https://github.com/hashicorp/go-getter for fetching files. This means that it can download natively over HTTPS, Git, Mercurial, S3 or GCP.
+
+Sometimes `go-getter`'s protocol handling may need to be explicitly set. For instance:
+
+```hcl
+including = "git::http://github.com/threatcl/threatcl.git"
+```
+
+This will ensure that this gets handled via the Git protocol.
+
+We've wrapped the function slightly to handle the use-case of downloading an entire git repo, and then selecting a single file. To do this, use the `|` separater.
+
+```hcl
+imports = ["github.com/threatcl/threatcl|examples/aws-security-checklist.hcl"]
+```

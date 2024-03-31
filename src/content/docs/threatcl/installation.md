@@ -10,13 +10,13 @@ Download the latest version from [releases](https://github.com/threatcl/threatcl
 
 The following will add a local tap, and install `threatcl` with [Homebrew](https://brew.sh/)
 
-```bash
+```bash title="terminal"
 brew install threatcl/repo/threatcl
 ```
 
 ## Run with Docker
 
-```bash
+```bash title="terminal"
 docker run --rm -it ghcr.io/threatcl/threatcl:latest
 ```
 
@@ -28,7 +28,7 @@ docker run --rm -it ghcr.io/threatcl/threatcl:latest
 
 ## Install with go
 
-```bash
+```bash title="terminal"
 go install github.com/threatcl/threatcl/cmd/threatcl@latest
 ```
 
@@ -36,7 +36,9 @@ go install github.com/threatcl/threatcl/cmd/threatcl@latest
 
 The source is available: https://github.com/threatcl/threatcl
 
-1. `git clone https://github.com/threatcl/threatcl`
-2. `cd threatcl`
-3. `make bootstrap`
-4. `make build`
+```bash title="terminal"
+git clone https://github.com/threatcl/threatcl
+cd threatcl
+make bootstrap
+make build
+```

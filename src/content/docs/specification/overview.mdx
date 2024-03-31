@@ -1,0 +1,120 @@
+---
+title: Threatcl Syntax Overview
+---
+
+import { Code } from '@astrojs/starlight/components';
+import minimumHcl from '/src/minimum.hcl?raw';
+
+The syntax used by `threatcl` is built around Hashicorp's Configuration Language, or HCL. You can read more about HCL at [github.com/hashicorp/hcl](https://github.com/hashicorp/hcl).
+
+HCL's syntax is meant to be easy to read and write, and loosely feels closer like JSON.
+
+## Arguments
+
+An _argument_ assigns a value to an attribute. This is an example of a simple string assignment.
+
+```hcl
+description = "Description of something"
+```
+
+Most value types in `threatcl` are strings, but you may also encounter numbers and boolean values too. Numbers don't need `"` characters, but boolean can work either way. The following are all valid.
+
+```hcl
+internet_facing = true
+new_initiative = "false"
+risk_reduction = 50
+```
+
+String values can also accept multiline strings as well.
+
+```hcl
+description = <<EOT
+This is a valid string.
+
+And includes these lines too
+EOT
+
+next_val = "value"
+```
+
+Values in some circumstances may be a list or array of values as well.
+
+```hcl
+stride = ["Spoofing", "Info Disclosure"]
+```
+
+## Blocks
+
+Blocks are used extensively by `threatcl`, and are used to contain other blocks and attributes.
+
+Blocks will always have a type, and may optionally include a label or identifier. Here are some examples.
+
+```hcl
+usecase {
+  description = "Description of the usecase"
+}
+
+information_asset "the name of the asset" {
+  description = "A detailed description of the asset"
+}
+
+component "control" "control_name" {
+  description = "A control"
+}
+```
+
+In many circumstances you can have multiple blocks, but if there is a label or identifier, these should be unique.
+
+## Comments
+
+Just like HCL, we support the following comments syntax:
+
+- `#` begins a single-line comment
+- `//` also begins a single-line comment
+- `/*` and `*/` are start and end delimiters for comments that span multiple lines.
+
+## Variables
+
+`threatcl` supports defining variables outside of your `threatmodel` blocks.
+
+You can then use them for any attribute that accepts a string.
+
+```hcl
+variable "var_name" {
+  value = "Variable text here"
+}
+
+threatmodel "tm" {
+  author = "@xntrik"
+
+  description = var.var_name
+}
+```
+
+You can also interpolate variables into broader strings. For example
+
+```hcl
+description = "Some larger context ${var.var_name}"
+```
+
+This works in multi-line values as well.
+
+```hcl
+description = <EOT
+A longer description.
+
+And also include: ${var.var_name}
+EOT
+```
+
+## Minimum requirements
+
+The minimum requirements for a `.hcl` file to meet `threatcl`'s spec is to include a `spec_version` string, and at least one `threatmodel` block.
+
+You need to give each `threatmodel` block a name.
+
+The only required element inside each `threatmodel` is an `author` string.
+
+This is a valid threat model file:
+
+<Code code={minimumHcl} lang="hcl" title="minimum.hcl" />

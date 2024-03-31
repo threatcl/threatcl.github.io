@@ -9,17 +9,3 @@ The following is a lightweight example of a `threatcl` HCL file. The specificati
 
 <Code code={importedHcl} lang="hcl" title="tower-of-london.hcl" />
 
-The minimum requirements for a `.hcl` file to meet `threatcl`'s requirements is to include a `spec_version` string, at least one `threatmodel` block.
-
-You need to give each `threatmodel` block a name.
-
-The only requirement element inside each `threatmodel` is an `author` string.
-
-This is a valid threat model:
-
-```hcl
-spec_version = "0.1.9"
-threatmodel "threatmodel name" {
-  author = "christian"
-}
-```
