@@ -1,0 +1,740 @@
+---
+title: Threatmodel block
+---
+
+import { Icon } from '@astrojs/starlight/components';
+
+Each `threatcl` hcl file has to include one more unique `threatmodel` blocks. 
+
+## threatmodel attributes
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Req'd</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_Specifies the name of the threat model_</td>
+    </tr>
+    <tr>
+      <td scope="row">author</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_Specifies the author of the threat model_</td>
+    </tr>
+    <tr>
+      <td scope="row">description</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_Describes the threat model_</td>
+    </tr>
+    <tr>
+      <td scope="row">link</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_An href to other documentation_</td>
+    </tr>
+    <tr>
+      <td scope="row">diagram_link</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_An href to a diagram. (see [diagram_link](#diagram_link))_</td>
+    </tr>
+    <tr>
+      <td scope="row">created_at</td>
+      <td>`integer`</td>
+      <td></td>
+      <td>_Creation UNIX timestamp_</td>
+    </tr>
+    <tr>
+      <td scope="row">updated_at</td>
+      <td>`integer`</td>
+      <td></td>
+      <td>_Updated UNIX timestamp_</td>
+    </tr>
+    <tr>
+      <td scope="row">attributes</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [attributes](#attributes)_</td>
+    </tr>
+    <tr>
+      <td scope="row">additional_attributes</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [additional_attributes](#additional_attributes)_</td>
+    </tr>
+    <tr>
+      <td scope="row">usecase</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [usecase](#usecase)_</td>
+    </tr>
+    <tr>
+      <td scope="row">exclusion</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [exclusion](#exclusion)_</td>
+    </tr>
+    <tr>
+      <td scope="row">third_party_dependency</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [third_party_dependency](#third_party_dependency)_</td>
+    </tr>
+    <tr>
+      <td scope="row">information_asset</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [information_asset](#information_asset)_</td>
+    </tr>
+    <tr>
+      <td scope="row">threat</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [threat](#threat)_</td>
+    </tr>
+    <tr>
+      <td scope="row">including</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_See [including](#including)_</td>
+    </tr>
+    <tr>
+      <td scope="row">imports</td>
+      <td>array [`string`]</td>
+      <td></td>
+      <td>_See [imports](#imports)_</td>
+    </tr>
+  </tbody>
+</table>
+
+### diagram_link
+
+If it ends in `.jpg` or `.png` then it will be embedded in the resultant dashboard. If this isn't set, but there is a data flow diagram, this will be automatically generated and included when running `threatcl dashboard`
+
+### attributes
+
+The `attributes` block is optional, but recommended. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">new_initiative</td>
+      <td>`boolean`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_Whether this is a new project_</td>
+    </tr>
+    <tr>
+      <td scope="row">internet_facing</td>
+      <td>`boolean`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_Whether this system is exposed to the Internet_</td>
+    </tr>
+    <tr>
+      <td scope="row">initiative_size</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_`Undefined`, `Small`, `Medium`, `Large`_</td>
+    </tr>
+  </tbody>
+</table>
+
+### additional_attributes
+
+Your `threatmodel` may include multiple `additional_attributes` blocks, with unique labels. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The name of the attribute_</td>
+    </tr>
+    <tr>
+      <td scope="row">value</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The value of the attribute_</td>
+    </tr>
+  </tbody>
+</table>
+
+## usecase
+
+Your `threatmodel` may include multiple `usecase` blocks. These don't have labels or identifiers. It includes the following attribute.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">description</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_A description of the system's use case_</td>
+    </tr>
+  </tbody>
+</table>
+
+## exclusion
+
+Your `threatmodel` may include multiple `exclusion` blocks. These don't have labels or identifiers. It includes the following attribute.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">description</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_Define of out-of-scope exclusions of the threatmodel_</td>
+    </tr>
+  </tbody>
+</table>
+
+## third_party_dependency
+
+Your `threatmodel` may include multiple `third_party_dependency` blocks, with unique labels. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The name of the 3rd party dep_</td>
+    </tr>
+    <tr>
+      <td scope="row">description</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_A description of the 3rd party dep_</td>
+    </tr>
+    <tr>
+      <td scope="row">uptime_dependency</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_`none`, `degraded`, `hard`, `operational`_</td>
+    </tr>
+    <tr>
+      <td scope="row">saas</td>
+      <td>`boolean`</td>
+      <td></td>
+      <td>_Is this a SaaS dep?_</td>
+    </tr>
+    <tr>
+      <td scope="row">paying_customer</td>
+      <td>`boolean`</td>
+      <td></td>
+      <td>_Are we paying for it?_</td>
+    </tr>
+    <tr>
+      <td scope="row">open_source</td>
+      <td>`boolean`</td>
+      <td></td>
+      <td>_Is this OSS?_</td>
+    </tr>
+    <tr>
+      <td scope="row">infrastructure</td>
+      <td>`boolean`</td>
+      <td></td>
+      <td>_Is this Infra?_</td>
+    </tr>
+    <tr>
+      <td scope="row">uptime_notes</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_Notes about what happens if unavailable_</td>
+    </tr>
+  </tbody>
+</table>
+
+## information_asset
+
+Your `threatmodel` may include multiple `information_asset` blocks, with unique labels. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The name of the asset_</td>
+    </tr>
+    <tr>
+      <td scope="row">description</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_Describe the asset_</td>
+    </tr>
+    <tr>
+      <td scope="row">information_classification</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_`Public`, `Confidential`, `Restricted`_</td>
+    </tr>
+    <tr>
+      <td scope="row">source</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_Where was block sourced from_<br />_i.e. terraform_</td>
+    </tr>
+  </tbody>
+</table>
+
+## threat
+
+Your `threatmodel` may include multiple `threat` blocks. These don't have labels or identifiers. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">description</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_Describe the threat_</td>
+    </tr>
+    <tr>
+      <td scope="row">impacts</td>
+      <td>array [`string`]</td>
+      <td></td>
+      <td>_`Confidentiality`, `Integrity`, `Availability`_</td>
+    </tr>
+    <tr>
+      <td scope="row">stride</td>
+      <td>array [`string`]</td>
+      <td></td>
+      <td>_`Spoofing`,<br />`Tampering`, <br />`Repudiation`, <br />`Info Disclosure`, <br />`Denial of Service`, <br />`Elevation of Privilege`_</td>
+    </tr>
+    <tr>
+      <td scope="row">information_asset_refs</td>
+      <td>array [`string`]</td>
+      <td></td>
+      <td>_Refer to `information_asset` blocks by their label_</td>
+    </tr>
+    <tr>
+      <td scope="row">expanded_control</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [expanded_control](#expanded_control)_</td>
+    </tr>
+  </tbody>
+</table>
+
+### expanded_control
+
+Your `threat` blocks may include multiple `expanded_control` blocks, with unique labels. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The name of the control_</td>
+    </tr>
+    <tr>
+      <td scope="row">description</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_Describe the control_</td>
+    </tr>
+    <tr>
+      <td scope="row">implemented</td>
+      <td>`boolean`</td>
+      <td></td>
+      <td>_Is it implemented?_</td>
+    </tr>
+    <tr>
+      <td scope="row">implementation_notes</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_Describe the implementation_</td>
+    </tr>
+    <tr>
+      <td scope="row">risk_reducation</td>
+      <td>`integer`</td>
+      <td></td>
+      <td>_How much this control reduces risk_</td>
+    </tr>
+    <tr>
+      <td scope="row">attribute</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [attribute](#attribute)_</td>
+    </tr>
+  </tbody>
+</table>
+
+#### attribute
+
+Your `expanded_control` blocks may include multiple `attribute` blocks, with unique labels. It includes the following attribute.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The name of the attribute_</td>
+    </tr>
+    <tr>
+      <td scope="row">value</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The value of the attribute_</td>
+    </tr>
+  </tbody>
+</table>
+
+## data_flow_diagram_v2
+
+Your `threatmodel` may include multiple `data_flow_diagram_v2` blocks, with unique labels. It includes the following attributes.
+
+Unlike other blocks, when you define a `process`, `data_store`, or `external_element` they must have a globally unique label, for that particular dfd. For example, you can't have a `process` and `data_store` called "foo".
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_dfd name_</td>
+    </tr>
+    <tr>
+      <td scope="row">process</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [process](#process)_</td>
+    </tr>
+    <tr>
+      <td scope="row">data_store</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [data_store](#data_store)_</td>
+    </tr>
+    <tr>
+      <td scope="row">external_element</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [external_element](#external_element)_</td>
+    </tr>
+    <tr>
+      <td scope="row">trust_zone</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [trust_zone](#trust_zone)_</td>
+    </tr>
+    <tr>
+      <td scope="row">flow</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [flow](#flow)_</td>
+    </tr>
+  </tbody>
+</table>
+
+### process
+
+Your `data_flow_diagram_v2` block may include multiple `process` blocks, with unique labels. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_process name_</td>
+    </tr>
+    <tr>
+      <td scope="row">trust_zone</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_defines a trust boundary / zone_</td>
+    </tr>
+  </tbody>
+</table>
+
+### data_store
+
+Your `data_flow_diagram_v2` block may include multiple `data_store` blocks, with unique labels. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_data store name_</td>
+    </tr>
+    <tr>
+      <td scope="row">trust_zone</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_defines a trust boundary / zone_</td>
+    </tr>
+    <tr>
+      <td scope="row">information_asset</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_refers back to a previous `information_asset` block [ref](#information_asset)_</td>
+    </tr>
+  </tbody>
+</table>
+
+### external_element
+
+Your `data_flow_diagram_v2` block may include multiple `external_element` blocks, with unique labels. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_external element name_</td>
+    </tr>
+    <tr>
+      <td scope="row">trust_zone</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_defines a trust boundary / zone_</td>
+    </tr>
+  </tbody>
+</table>
+
+### trust_zone
+
+Your `data_flow_diagram_v2` block may include multiple `trust_zone` blocks, with unique labels. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_trust zone name_</td>
+    </tr>
+    <tr>
+      <td scope="row">process</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_see [process](#process)_</td>
+    </tr>
+    <tr>
+      <td scope="row">data_store</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_see [data_store](#data_store)_</td>
+    </tr>
+    <tr>
+      <td scope="row">external_element</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_see [external_element](#external_element)_</td>
+    </tr>
+  </tbody>
+</table>
+
+### flow
+
+Your `data_flow_diagram_v2` block may include multiple `flow` blocks. A `flow` must have a label, but it doesn't have to be unique. But, the `from` and `to` attributes must be unique. It includes the following attributes.
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_flow title_</td>
+    </tr>
+    <tr>
+      <td scope="row">from</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_refer to a `process`, `external_element` or `data_store`_</td>
+    </tr>
+    <tr>
+      <td scope="row">to</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_refer to a `process`, `external_element` or `data_store`_</td>
+    </tr>
+  </tbody>
+</table>
+
+## including
+
+Each `threatmodel` may optionally include an `including` attribute `string` that refers to a single other `threatcl` hcl file.
+
+In this file must be a single, valid `threatmodel` block.
+
+This included threatmodel will form the base of this new threatmodel. Any duplicate fields in the parent threat model will overwrite those from the included.
+
+See [External HCL Files](/specification/external-files/) for more information on how to refer to external files.
+
+## imports
+
+Each `threatmodel` may optionally include an `imports` attribute with an array of `string` values that refer to other hcl files.
+
+These files are used to centrally define various attributes that you can then refer to in your `threatmodel`. Currently we only support the definition of "controls".
+
+An example import file may look like:
+
+```hcl
+// controls.hcl
+component "control" "control_name" {
+  description = "A control that can be used in multiple places"
+}
+```
+
+To use these imports, you reference to the string value like this:
+
+```hcl
+// threatmodel.hcl
+threatmodel "tm" {
+  author = "@xntrik"
+  description = "A threat model"
+
+  imports = ["controls.hcl"]
+
+  threat {
+    description = "Something bad"
+
+    expanded_control "control" {
+      description = import.control.control_name.description
+    }
+  }
+}
+```
+
+Technically you can use these `import` values similar to [Variables](/specification/overview/#variables)
+
+See [External HCL Files](/specification/external-files/) for more information on how to refer to external files.

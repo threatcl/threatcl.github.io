@@ -6,7 +6,7 @@ title: Using threatcl
 
 For help on any subcommands, use the `-h` flag.
 
-```bash
+```bash title="terminal"
 $ threatcl
 Usage: threatcl [--version] [--help] <command> [<args>]
 
@@ -65,7 +65,7 @@ These are the main sub-commands available to `threatcl`
 
 The `threatcl validate` command is used to validate a `threatcl` spec HCL file.
 
-```bash
+```bash title="terminal"
 $ threatcl validate examples/*
 Validated 3 threatmodels in 3 files
 ```
@@ -78,7 +78,7 @@ If you want to pipe input into `validate` you can do so with with `-stdin` or `-
 
 The `threatcl list` command can be used to list threat models from a selection of hcl files.
 
-```bash
+```bash title="terminal"
 $ threatcl list examples/*
 #  File              Threatmodel      Author
 1  examples/tm1.hcl  Tower of London  @xntrik
@@ -111,7 +111,7 @@ By default it'll be as if you provided `-fields=number,file,threatmodel,author`
 
 The `threatcl view` command can be used to view threat models from a selection of hcl files.
 
-```bash
+```bash title="terminal"
 $ threatcl view examples/tm2.hcl
 
   Modelly model
@@ -147,7 +147,7 @@ If you provide the `-raw` flag, then raw markdown will be returned.
 
 The `threatcl export` command is used to export a threat model (or models) into the native JSON representation, by default. You can also export into the [OpenThreatModel](https://github.com/IriusRisk/OpenThreatModel) JSON representation.
 
-```bash
+```bash title="terminal"
 $ threatcl export -format=otm examples/tm1.hcl
 [{"assets":[{"description":"including the imperial state crown","id":"crown-jewels","name":"crown jewels","risk":{"availability":0,"confidentiality":0,"integrity":0}}],"mitigations":[{"attributes":{"implementation_notes":"They are trained to be guards as well","implemented":true},"description":"Lots of guards patrol the area","id":"lots-of-guards","name":"Lots of Guards","riskReduction":80}],"otmVersion":"0.2.0","project":{"attributes":{"initiative_size":"Small","internet_facing":true,"network_segment":"dmz","new_initiative":true},"description":"A historic castle","id":"tower-of-london","name":"Tower of London","owner":"@xntrik"},"threats":[{"categories":["Confidentiality"],"description":"Someone who isn't the Queen steals the crown","id":"threat-1","name":"Threat 1","risk":{"impact":0,"likelihood":null}}]},{"assets":[{"description":"Lots of gold", "id":"gold","name":"Gold","risk":{"availability":0,"confidentiality":0,"integrity":0}}],"mitigations":[{"attributes":{"implemented":true},"description":"A large wall surrounds the fort","id":"big-wall","name":"Big Wall","riskReduction":80}],"otmVersion":"0.2.0","project":{"attributes":{"initiative_size":"Small","internet_facing":true,"new_initiative": false},"description":"A .. fort?","id":"fort-knox","name":"Fort Knox","owner":"@xntrik"},"threats":[{"categories":["Confidentiality"],"description":"Someone steals the gold","id":"threat-1","name":"Threat 1","risk":{"impact":0,"likelihood":null}}]}]
 ```
@@ -162,7 +162,7 @@ $ threatcl export -format=otm examples/tm1.hcl
 
 The `threatcl dashboard` command takes `threatcl` HCL files, and generates a number of output files, and optionally PNG files, dropping them into the selected folder.
 
-```bash
+```bash title="terminal"
 $ threatcl dashboard -overwrite -outdir=dashboard-example examples/*
 Created the 'dashboard-example' directory
 Writing dashboard markdown files to 'dashboard-example' and overwriting existing files
@@ -207,7 +207,7 @@ If the HCL file doesn't include a `threatmodel` block with a `data_flow_diagram`
 
 The command is similar to the `dashboard` command.
 
-```bash
+```bash title="terminal"
 $ threatcl dfd -overwrite -outdir testout examples/*
 Successfully created 'testout/tm2-modellymodel.png'
 ```
@@ -230,13 +230,13 @@ The `threatcl terraform` command is able to extract data resources from the `ter
 
 If you're in a folder with existing state, you can execute the following:
 
-```bash
+```bash title="terminal"
 terraform show -json | threatcl terraform -stdin
 ```
 
 This will output something similar to this:
 
-```bash
+```bash title="terminal"
 information_asset "aws_rds_cluster default" {
   description                = "cluster_identifier: aurora-cluster-demo, database_name: mydb"
   information_classification = ""
@@ -257,7 +257,7 @@ terraform show -json <plan-file> | threatcl terraform -stdin
 
 If you want to update an existing `threatcl` threat model file ("threatmodel.hcl") you can with:
 
-```bash
+```bash title="terminal"
 terraform show -json <plan> | threatcl terraform -stdin -add-to-existing=threatmodel.hcl > new-threatmodel.hcl
 ```
 
@@ -283,7 +283,7 @@ The `threatcl generate` command is used to either output a generic `boilterplate
 
 See the following example of:
 
-```bash
+```bash title="terminal"
 threatcl generate interactive
 ```
 
@@ -293,7 +293,7 @@ threatcl generate interactive
 
 If you prefer to work directly in your `$EDITOR` then run:
 
-```bash
+```bash title="terminal"
 threatcl generate interactive editor
 ```
 

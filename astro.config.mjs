@@ -22,7 +22,14 @@ export default defineConfig({
 				},
 				{
 					label: 'Threatcl specification',
-					autogenerate: { directory: 'specification' },
+					// autogenerate: { directory: 'specification' },
+          items: [
+            { label: 'Syntax Overview', link: '/specification/overview/' },
+            { label: 'Threatmodel Block', link: '/specification/threatmodel/' },
+            { label: 'External HCL Files', link: '/specification/external-files/' },
+            { label: 'Example Threat Model', link: '/specification/example/' },
+            { label: "Full Spec", link :'/specification/full-spec/' },
+          ],
 				},
 			],
 		}),
