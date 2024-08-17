@@ -1,0 +1,15 @@
+---
+title: Threatcl and CI/CD
+---
+
+One of the key goals of `threatcl` is to integrate into a version control system (VCS), source code management system (SCM), or into continuous integration/deployment system (CI/CD).
+
+Mostly integrating into CI/CD is as simple as wrapping the docker version of `threatcl`.
+
+If you're happy with using docker containers, cool:
+
+```bash title="terminal"
+docker run --rm -it ghcr.io/threatcl/threatcl:latest
+```
+
+The following pages will go into various SCM platforms, to explain how to integrate `threatcl` into your code repos.

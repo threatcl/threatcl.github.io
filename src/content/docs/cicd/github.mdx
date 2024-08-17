@@ -1,0 +1,30 @@
+---
+title: Threatcl and Github Actions
+---
+import { Code } from '@astrojs/starlight/components';
+
+export const codeSnippet = `name: threatcl validate
+
+on: [push, pull_request]
+
+jobs:
+  threatcl-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: threatcl validate
+        uses: threatcl/threatcl-action@v0.0.1
+        with:
+          command: 'validate'
+          files: './hcl-files/*'`
+
+The full Github Action documentation is available: https://github.com/threatcl/threatcl-action. 
+
+This is also where you can see the current version of the action.
+
+A good place to start is validate a folder of `threatcl` hcl files, as below:
+
+<Code code={codeSnippet} lang="yaml" title=".github/workflows/validate.yml" />
+
+For more examples, check out the example repository at https://github.com/threatcl/threatcl-action-example/actions

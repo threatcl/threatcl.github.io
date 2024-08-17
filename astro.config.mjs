@@ -31,6 +31,13 @@ export default defineConfig({
             { label: "Full Spec", link :'/specification/full-spec/' },
           ],
 				},
+        {
+          label: 'Threatcl in CI/CD',
+          items: [
+            { label: 'CI/CD Overview', link: '/cicd/overview/' },
+            { label: 'GitHub Actions', link: '/cicd/github/' },
+          ],
+        },
 			],
 		}),
 	],

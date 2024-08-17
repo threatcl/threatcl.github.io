@@ -152,9 +152,11 @@ $ threatcl export -format=otm examples/tm1.hcl
 [{"assets":[{"description":"including the imperial state crown","id":"crown-jewels","name":"crown jewels","risk":{"availability":0,"confidentiality":0,"integrity":0}}],"mitigations":[{"attributes":{"implementation_notes":"They are trained to be guards as well","implemented":true},"description":"Lots of guards patrol the area","id":"lots-of-guards","name":"Lots of Guards","riskReduction":80}],"otmVersion":"0.2.0","project":{"attributes":{"initiative_size":"Small","internet_facing":true,"network_segment":"dmz","new_initiative":true},"description":"A historic castle","id":"tower-of-london","name":"Tower of London","owner":"@xntrik"},"threats":[{"categories":["Confidentiality"],"description":"Someone who isn't the Queen steals the crown","id":"threat-1","name":"Threat 1","risk":{"impact":0,"likelihood":null}}]},{"assets":[{"description":"Lots of gold", "id":"gold","name":"Gold","risk":{"availability":0,"confidentiality":0,"integrity":0}}],"mitigations":[{"attributes":{"implemented":true},"description":"A large wall surrounds the fort","id":"big-wall","name":"Big Wall","riskReduction":80}],"otmVersion":"0.2.0","project":{"attributes":{"initiative_size":"Small","internet_facing":true,"new_initiative": false},"description":"A .. fort?","id":"fort-knox","name":"Fort Knox","owner":"@xntrik"},"threats":[{"categories":["Confidentiality"],"description":"Someone steals the gold","id":"threat-1","name":"Threat 1","risk":{"impact":0,"likelihood":null}}]}]
 ```
 
+If you set the `-format` to `hcl` this is useful if you want to return a re-formatted HCL output from a dynamic threat model.
+
 #### Export options
 
-- You can specify the output of the export with the `-format` flag. By default this is set to `json`, but you can also set it to `otm`.
+- You can specify the output of the export with the `-format` flag. By default this is set to `json`, but you can also set it to `otm` or `hcl`.
 
 - If you want to write to a file instead of `stdout` use the `-output` flag, for example `threatcl export -output=filename.json`. If you want to overwrite the output file, supply the `-overwrite` flag.
 
