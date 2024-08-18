@@ -3,6 +3,16 @@ title: Threatcl and Github Actions
 ---
 import { Code } from '@astrojs/starlight/components';
 
+export const commitSnippet = `- name: Commit changes
+    run: |
+      git config --global user.name "threatcl Git Action"
+      git config --global user.email "yourrepo@users.noreply.github.com"
+      git add ./dashboard/*
+      git add ./html-dashboard/*
+      git add ./custom-dashboard/*
+      git commit -m "Automated updated dashboard and export"
+      git push`
+
 export const codeSnippet = `name: threatcl validate
 
 on: [push, pull_request]
@@ -19,12 +29,71 @@ jobs:
           command: 'validate'
           files: './hcl-files/*'`
 
+export const dashboardSnippet = `name: threatcl dashboard
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  threatcl-dashboard:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: threatcl dashboard
+        uses: threatcl/threatcl-action@v0.0.2
+        with:
+          command: 'dashboard'
+          files: './hcl-files/*'
+          outdir: './dashboard'
+      - name: threatcl custom dashboard
+        uses: threatcl/threatcl-action@v0.0.2
+        with:
+          command: 'dashboard'
+          files: './hcl-files/*'
+          outdir: './custom-dashboard'
+          dashboard-template: './templates/dashboard-template.tpl'
+          dashboard-filename: 'db'
+          threatmodel-template: './templates/threatmodel-template.tpl'
+      - name: threatcl custom html dashboard
+        uses: threatcl/threatcl-action@v0.0.2
+        with:
+          command: 'dashboard'
+          files: './hcl-files/*'
+          outdir: './html-dashboard'
+          dashboard-template: './templates/dashboard-template-html.tpl'
+          dashboard-filename: 'index'
+          threatmodel-template: './templates/threatmodel-template-html.tpl'
+          dashboard-html: 'true'`
+
 The full Github Action documentation is available: https://github.com/threatcl/threatcl-action. 
 
 This is also where you can see the current version of the action.
 
+## validation
+
 A good place to start is validate a folder of `threatcl` hcl files, as below:
 
 <Code code={codeSnippet} lang="yaml" title=".github/workflows/validate.yml" />
+
+## dashboards
+
+Creating and publishing dashboards is one of the key things you may want to do with threatcl. The below snippet demonstrates three different dashboards:
+
+1. The default threatcl dashboard templates into markdown
+2. Custom threatcl dashboard templates into markdown
+3. Custom threatcl dashboard templates into html
+
+You can see the full example of this [here](https://github.com/threatcl/threatcl-action-example/blob/main/.github/workflows/threatcl-dashboard-and-export.yml)
+
+<Code code={dashboardSnippet} lang="yaml" title=".github/workflows/dashboard.yml" />
+
+If you want a step to commit these files back into the repo, you can use something like:
+
+<Code code={commitSnippet} lang="yaml" />
 
 For more examples, check out the example repository at https://github.com/threatcl/threatcl-action-example/actions
