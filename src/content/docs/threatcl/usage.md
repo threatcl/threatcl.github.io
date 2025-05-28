@@ -16,6 +16,7 @@ Available commands are:
     export       Export threat models into other formats
     generate     Generate an HCL Threat Model
     list         List Threatmodels found in HCL file(s)
+    mcp          Model Context Protocol (MCP) server for threatcl
     terraform    Parse output from 'terraform show -json'
     validate     Validate existing HCL Threatmodel file(s)
     view         View existing HCL Threatmodel file(s)
@@ -300,3 +301,29 @@ threatcl generate interactive editor
 ```
 
 This will open your editor with a barebones HCL threat model. If you want to validate the model after creation, then use the `-validate` flag.
+
+### MCP
+
+The `threatcl mcp` command exposes a local [MCP](https://modelcontextprotocol.io/introduction) server so that you can interact with threatcl hcl files via an MCP Host, for instance AI/LLM applications such as [Claude Desktop](https://claude.ai/download), [Cursor](https://www.cursor.com/), or any other applications that support MCP. 
+
+You don't typically start this in an interactive terminal, instead, you would add this to your MCP Host application's configuration.
+
+#### MCP options
+
+- You may specify an optional `-dir=<path>` flag that will expose additional MCP Tools into your environment. 
+
+#### Claude Example Configuration
+
+```json
+{
+    "mcpServers": {
+        "threatcl": {
+            "command": "/path/to/threatcl",
+            "args": [
+                "mcp",
+                "-dir=/path/to/hcl-files"
+            ]
+        }
+    }
+}
+```
