@@ -381,6 +381,12 @@ Your `threatmodel` may include multiple `threat` blocks. These don't have labels
       <td></td>
       <td>_See [expanded_control](#expanded_control)_</td>
     </tr>
+    <tr>
+      <td scope="row">control_imports</td>
+      <td>array [`string`]</td>
+      <td></td>
+      <td>_Allows you to import full expanded control blocks. See [imports](#imports)_</td>
+    </tr>
   </tbody>
 </table>
 
@@ -704,7 +710,7 @@ See [External HCL Files](/specification/external-files/) for more information on
 
 Each `threatmodel` may optionally include an `imports` attribute with an array of `string` values that refer to other hcl files.
 
-These files are used to centrally define various attributes that you can then refer to in your `threatmodel`. Currently we only support the definition of "controls".
+These files are used to centrally define various attributes that you can then refer to in your `threatmodel`. Currently we only support the definition of "control", and "expanded_control" components.
 
 An example import file may look like:
 
@@ -712,6 +718,21 @@ An example import file may look like:
 // controls.hcl
 component "control" "control_name" {
   description = "A control that can be used in multiple places"
+}
+
+component "expanded_control" "authentication_control" {
+  description = "Multi-factor authentication required"
+  implemented = true
+  implementation_notes = "Using TOTP for all admin accounts"
+  risk_reduction = 80
+  
+  attribute "category" {
+    value = "Authentication"
+  }
+  
+  attribute "framework" {
+    value = "NIST"
+  }
 }
 ```
 
@@ -735,6 +756,45 @@ threatmodel "tm" {
 }
 ```
 
+You can also use string interpolation as well, so for instance:
+
+```hcl
+  description = "Some text that and ${import.control.control_name.description}"
+```
+
 Technically you can use these `import` values similar to [Variables](/specification/overview/#variables)
+
+The `expanded_control` components are imported slightly differently, in this instance, you use the `control_imports` string array inside a `threat` block. For example, to import the authentication_control from above:
+
+```hcl
+
+threat {
+  description = "Authentication is bypassed"
+
+  control_imports = ["import.expanded_control.authentication_control"]
+}
+```
+
+When this is Viewed, or Exported, that threat will include that external Expanded Control block
+
+```hcl
+threat {
+    description            = "Authentication is bypassed"
+
+    expanded_control "authentication_control" {
+      implemented          = true
+      description          = "Multi-factor authentication required"
+      implementation_notes = "Using TOTP for all admin accounts"
+      risk_reduction       = 80
+
+      attribute "category" {
+        value = "Authentication"
+      }
+      attribute "framework" {
+        value = "NIST"
+      }
+    }
+  }
+```
 
 See [External HCL Files](/specification/external-files/) for more information on how to refer to external files.
