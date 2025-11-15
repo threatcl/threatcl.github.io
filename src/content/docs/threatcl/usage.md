@@ -17,6 +17,7 @@ Available commands are:
     generate     Generate an HCL Threat Model
     list         List Threatmodels found in HCL file(s)
     mcp          Model Context Protocol (MCP) server for threatcl
+    server       Start a GraphQL API server for threat models
     terraform    Parse output from 'terraform show -json'
     validate     Validate existing HCL Threatmodel file(s)
     view         View existing HCL Threatmodel file(s)
@@ -202,7 +203,7 @@ You can fully customise the templates used to generate `dashboard` output. By de
 
 ### Data Flow Diagram
 
-As per the [spec](link), a `threatmodel` may include `data_flow_diagram_v2` blocks. An example of a simple DFD is available [here](link). The legacy `data_flow_diagram` blog will be deprecated at some point.
+As per the [spec](/specification/overview/), a `threatmodel` may include `data_flow_diagram_v2` blocks. An example of a simple DFD is available [here](/specification/overview/). The legacy `data_flow_diagram` blog will be deprecated at some point.
 
 The `threatcl dfd` command takes `threatcl` HCL files, and generates a number of png files, dropping them into a selected folder.
 
@@ -327,3 +328,22 @@ You don't typically start this in an interactive terminal, instead, you would ad
     }
 }
 ```
+
+### Server (GraphQL API)
+
+The `threatcl server` command starts a GraphQL API server that exposes your threat models via HTTP for programmatic querying and integration.
+
+Once running, you can visit the GraphQL API Endpoint at `http://localhost:port/graphql`. Or, the GraphQL Playground at `http://localhost:port/`
+
+For more detailed information, refer to:
+
+- [GraphQL Overview](/graphql/overview/)
+- [GraphQL Example Queries](/graphql/example-queries/)
+
+#### Server options
+
+- You must specify a directory path containing HCL (or JSON) threat model files with the `-dir=<path>` flag
+
+- Optionally you can set the listening TCP port with `-port=<number>`. By default it will listen on `8080`
+
+- Optionally you can also enable Watching for file changes, and reloading the cache. This is not enabled by default, to enable it, set the `-watch` flag.

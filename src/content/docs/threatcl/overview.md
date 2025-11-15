@@ -81,6 +81,8 @@ Using `threatcl` we can then:
 * Generate a dashboard and a set of HTML, Markdown, or arbitrary other files of all the threat models - for publishing
 * Export this to JSON or [OTM](https://github.com/IriusRisk/OpenThreatModel).
 * Enrich your information assets from [Terraform](https://www.terraform.io/).
+* Run an MCP Server to help LLM Hosts to navigate how to generate, validate, and export DFDs from threat models
+* Run a GraphQL API to interact with all your threat models in highly advanced ways.
 
 ## Further reading
 

@@ -38,6 +38,13 @@ export default defineConfig({
             { label: 'GitHub Actions', link: '/cicd/github/' },
           ],
         },
+        {
+          label: 'ThreatCL GraphQL API',
+          items: [
+            { label: 'GraphQL Overview', link: '/graphql/overview/' },
+            { label: 'GraphQL Example Queries', link: '/graphql/example-queries/' },
+          ],
+        },
 			],
 		}),
 	],
