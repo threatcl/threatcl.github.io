@@ -45,6 +45,16 @@ export default defineConfig({
             { label: 'GraphQL Example Queries', link: '/graphql/example-queries/' },
           ],
         },
+        {
+          label: 'ThreatCL Cloud',
+          items: [
+            { label: 'Cloud Overview', link: '/cloud/overview/' },
+            { label: 'Authentication', link: '/cloud/authentication/' },
+            { label: 'Threat Models', link: '/cloud/threat-models/' },
+            { label: 'Search', link: '/cloud/search/' },
+            { label: 'Library', link: '/cloud/library/' },
+          ],
+        },
 			],
 		}),
 	],
