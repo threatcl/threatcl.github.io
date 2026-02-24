@@ -145,6 +145,10 @@ This is useful for CI/CD pipelines or pre-push checks. See the [Cloud Overview](
 
 The `cloud view` command renders a threat model with enriched data from ThreatCL Cloud, including resolved library references for threats and controls.
 
+Controls that reference the cloud control library are enriched with their descriptions, implementation guidance, and risk reduction values. If the control has local values set (e.g., description, risk_reduction), those local values are preserved and the cloud data is not used to overwrite them.
+
+By default, threats that reference the threat library will also include their recommended controls from the library.
+
 ```bash title="terminal"
 $ threatcl cloud view my-threatmodel.hcl
 
@@ -169,7 +173,23 @@ $ threatcl cloud view my-threatmodel.hcl
   │ Risk Reduction: 80
 ```
 
+### Viewing a cloud threat model directly
+
+Use `-model-id` to fetch and view a threat model directly from ThreatCL Cloud without needing a local copy of the HCL file. You can pass either the model ID or its slug.
+
+```bash title="terminal"
+$ threatcl cloud view -model-id=my-threat-model
+```
+
+If you belong to multiple organizations, use `-org-id` to specify which one to fetch from:
+
+```bash title="terminal"
+$ threatcl cloud view -model-id=my-threat-model -org-id=<orgId>
+```
+
 #### View options
 
+- `-model-id` — fetch and view a threat model from ThreatCL Cloud by ID or slug. When set, the `<file>` argument is not required.
+- `-org-id` — organization ID to use with `-model-id`. If not provided, uses the `THREATCL_CLOUD_ORG` env var or the default from your token store.
 - `-raw` — output raw markdown instead of the formatted display
 - `-ignore-linked-controls` — skip resolving linked control references from the cloud library
