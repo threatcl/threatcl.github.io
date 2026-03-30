@@ -92,3 +92,4 @@ The `push` command validates your HCL file for cloud compatibility, creates the 
 - [Managing Threat Models](/cloud/threat-models/) — create, upload, push, validate, and view
 - [Searching Threat Models](/cloud/search/) — search threats and controls across your org
 - [Threat & Control Libraries](/cloud/library/) — import, export, and manage shared libraries
+- [Policies](/cloud/policies/) — create, validate, and evaluate Rego-based policies
