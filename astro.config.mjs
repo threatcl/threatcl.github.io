@@ -53,6 +53,7 @@ export default defineConfig({
             { label: 'Threat Models', link: '/cloud/threat-models/' },
             { label: 'Search', link: '/cloud/search/' },
             { label: 'Library', link: '/cloud/library/' },
+            { label: 'Policies', link: '/cloud/policies/' },
           ],
         },
 			],
