@@ -218,15 +218,17 @@ Successfully created 'testout/tm2-modellymodel.png'
 
 #### Data Flow Diagram options
 
-- You can specify the output format with the `-format` flag. By default this is set to `png`, but you can also set it to `dot` or `svg`.
+- You can specify the output format with the `-format` flag. By default this is set to `png`, but you can also set it to `dot`, `svg`, `mermaid`, or `d2`.
 
-- If the `-format=dot`, you can output directly to STDOUT with the `-stdout` flag.
+- If the format is textual (dot, mermaid, d2), you can output directly to STDOUT with the `-stdout` flag.
 
 - `-outdir` is the directory where files are written. This folder will be created if it doesn't exist. Either this, or `-out` must be set.
 
 - `-out` is the name of a single output file. Only the first discovered DFD in all the parsed HCL files will be created. Either this or `-outdir` must be set.
 
 - `-overwrite` flag can optionally be added to overwrite any output content.
+
+- `-protocol-style` controls how to render the optional data flow `protocol` attribute. By default this will be `label`, but can optionally be set to `color` to color each flow's edge by protocol and emit a legend. `-protocol-style` can also be `none` or `both`. Both allows you to label the flow and color-code.
 
 ### Terraform
 
