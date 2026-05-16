@@ -17,7 +17,7 @@ Search for threats across all threat models in your organization:
 ```bash title="terminal"
 $ threatcl cloud search -type=threats
 ============================================================
-  ThreatCL Cloud - Threat Search Results
+  Threatcl Cloud - Threat Search Results
   Filters: all
 ============================================================
 
@@ -68,7 +68,7 @@ Search for controls across all threat models:
 ```bash title="terminal"
 $ threatcl cloud search -type=controls
 ============================================================
-  ThreatCL Cloud - Control Search Results
+  Threatcl Cloud - Control Search Results
   Filters: all
 ============================================================
 

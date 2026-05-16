@@ -2,11 +2,11 @@
 title: Threat & Control Libraries
 ---
 
-ThreatCL Cloud provides shared threat and control libraries at the organization level. Libraries let your team define reusable threats and controls that can be referenced across multiple threat models.
+Threatcl Cloud provides shared threat and control libraries at the organization level. Libraries let your team define reusable threats and controls that can be referenced across multiple threat models.
 
 ## Importing a Library
 
-The `cloud library import` command imports threats and controls from a local HCL library file into ThreatCL Cloud.
+The `cloud library import` command imports threats and controls from a local HCL library file into Threatcl Cloud.
 
 ```bash title="terminal"
 $ threatcl cloud library import my-library.hcl

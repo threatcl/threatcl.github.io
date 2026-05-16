@@ -1,12 +1,16 @@
 ---
-title: ThreatCL Cloud Overview
+title: Threatcl Cloud Overview
 ---
 
-## What is ThreatCL Cloud?
+:::tip[Learn more]
+Visit [threatcl.com](https://threatcl.com) for more information about Threatcl Cloud, pricing, and to sign up.
+:::
 
-ThreatCL Cloud is a SaaS platform for collaborative threat modeling. It extends the local `threatcl` CLI experience by providing a centralized, multi-user environment where teams can share, manage, and collaborate on threat models together.
+## What is Threatcl Cloud?
 
-While the standard `threatcl` CLI works entirely with local HCL files, ThreatCL Cloud adds:
+Threatcl Cloud is a SaaS platform for collaborative threat modeling. It extends the local `threatcl` CLI experience by providing a centralized, multi-user environment where teams can share, manage, and collaborate on threat models together.
+
+While the standard `threatcl` CLI works entirely with local HCL files, Threatcl Cloud adds:
 
 - **Centralized storage** — threat models are stored in the cloud and accessible by your team
 - **Collaboration** — multiple team members can work on threat models within the same organization
@@ -16,7 +20,7 @@ While the standard `threatcl` CLI works entirely with local HCL files, ThreatCL 
 
 ## Organizations and Roles
 
-ThreatCL Cloud is organized around **organizations**. Each organization has members with one of the following roles:
+Threatcl Cloud is organized around **organizations**. Each organization has members with one of the following roles:
 
 - **Owner** — full administrative control over the organization
 - **Admin** — can manage members and threat models
@@ -25,7 +29,7 @@ ThreatCL Cloud is organized around **organizations**. Each organization has memb
 
 ## Backend Block
 
-To link a local HCL threat model file to ThreatCL Cloud, add a `backend` block to your `threatmodel` block:
+To link a local HCL threat model file to Threatcl Cloud, add a `backend` block to your `threatmodel` block:
 
 ```hcl
 backend "threatcl-cloud" {
@@ -44,13 +48,13 @@ threatmodel "My Application" {
 }
 ```
 
-The `backend "threatcl-cloud"` block is placed outside (before) the `threatmodel` block. It signals to the CLI that this file is intended for use with ThreatCL Cloud. Commands like `cloud push` and `cloud validate` check for this block.
+The `backend "threatcl-cloud"` block is placed outside (before) the `threatmodel` block. It signals to the CLI that this file is intended for use with Threatcl Cloud. Commands like `cloud push` and `cloud validate` check for this block.
 
 ## Environment Variables
 
-The following environment variables can be used to configure ThreatCL Cloud commands:
+The following environment variables can be used to configure Threatcl Cloud commands:
 
-- `THREATCL_API_URL` — the ThreatCL Cloud API endpoint URL
+- `THREATCL_API_URL` — the Threatcl Cloud API endpoint URL
 - `THREATCL_API_TOKEN` — an API token for authentication (alternative to device flow login)
 - `THREATCL_CLOUD_ORG` — the default organization ID to use for cloud commands
 
@@ -58,7 +62,7 @@ These environment variables can be used instead of (or in addition to) flags and
 
 ## Quick Start
 
-The typical flow for getting started with ThreatCL Cloud is:
+The typical flow for getting started with Threatcl Cloud is:
 
 ### 1. Log in
 

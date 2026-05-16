@@ -2,11 +2,11 @@
 title: Authentication & Tokens
 ---
 
-ThreatCL Cloud commands require authentication. The CLI supports device flow authentication, manually added tokens, and environment variable-based auth.
+Threatcl Cloud commands require authentication. The CLI supports device flow authentication, manually added tokens, and environment variable-based auth.
 
 ## Login
 
-The `cloud login` command authenticates you with ThreatCL Cloud using a device flow. You'll be given a URL and a code to enter in your browser.
+The `cloud login` command authenticates you with Threatcl Cloud using a device flow. You'll be given a URL and a code to enter in your browser.
 
 ```bash title="terminal"
 $ threatcl cloud login
@@ -38,7 +38,7 @@ The `cloud whoami` command displays information about the currently authenticate
 ```bash title="terminal"
 $ threatcl cloud whoami
 ============================================================
-  ThreatCL Cloud - User Information
+  Threatcl Cloud - User Information
 ============================================================
 
 Current Organization: bba13a37-0d50-4470-a731-f57bf67ac6eb

@@ -39,14 +39,14 @@ export default defineConfig({
           ],
         },
         {
-          label: 'ThreatCL GraphQL API',
+          label: 'Threatcl GraphQL API',
           items: [
             { label: 'GraphQL Overview', link: '/graphql/overview/' },
             { label: 'GraphQL Example Queries', link: '/graphql/example-queries/' },
           ],
         },
         {
-          label: 'ThreatCL Cloud',
+          label: 'Threatcl Cloud',
           items: [
             { label: 'Cloud Overview', link: '/cloud/overview/' },
             { label: 'Authentication', link: '/cloud/authentication/' },

@@ -2,7 +2,7 @@
 title: Policies
 ---
 
-ThreatCL Cloud policies let you define automated checks against your threat models using [Rego](https://www.openpolicyagent.org/docs/latest/policy-language/) (Open Policy Agent's policy language). Policies can enforce standards like requiring specific controls, minimum threat coverage, or naming conventions across your organization.
+Threatcl Cloud policies let you define automated checks against your threat models using [Rego](https://www.openpolicyagent.org/docs/latest/policy-language/) (Open Policy Agent's policy language). Policies can enforce standards like requiring specific controls, minimum threat coverage, or naming conventions across your organization.
 
 ## Listing Policies
 
@@ -73,7 +73,7 @@ $ threatcl cloud policy update -policy-id=<uuid> -severity=warning
 
 ## Deleting a Policy
 
-The `cloud policy delete` command deletes a policy from ThreatCL Cloud.
+The `cloud policy delete` command deletes a policy from Threatcl Cloud.
 
 ```bash title="terminal"
 $ threatcl cloud policy delete -policy-id=<uuid>
@@ -86,7 +86,7 @@ $ threatcl cloud policy delete -policy-id=<uuid>
 
 ## Validating a Rego File
 
-The `cloud policy validate` command validates a local `.rego` file against the ThreatCL Cloud API without creating a policy.
+The `cloud policy validate` command validates a local `.rego` file against the Threatcl Cloud API without creating a policy.
 
 ```bash title="terminal"
 $ threatcl cloud policy validate my-policy.rego
