@@ -12,9 +12,33 @@ You can refer to a local file simply by providing the path to the file.
 including = "shared/city-threatmodel.hcl"
 ```
 
+Local references are contained to the directory of the file that refers to them. A reference that resolves outside that directory — whether via `../` traversal or an absolute `file:///etc/passwd` style path — is rejected with `local import '<source>' resolves outside the directory of the referring file`. Parsing a threat model can't be used to read arbitrary files off the host.
+
 ## Remote file reference
 
-`threatcl` uses https://github.com/hashicorp/go-getter for fetching files. This means that it can download natively over HTTPS, Git, Mercurial, S3 or GCP.
+:::caution[Remote sources are disabled by default]
+As of spec `0.5.0`, `threatcl` will not fetch remote `imports` or `including` sources unless you explicitly opt in. Without that, parsing an untrusted threat model would be enough to trigger arbitrary network fetches. A remote reference without the opt-in fails with:
+
+```
+remote import of '<source>' is disabled; set allow_remote_imports = true in your threatcl config to permit fetching remote sources
+```
+:::
+
+To allow remote fetching, set `allow_remote_imports` in a [config file](/threatcl/usage/#optional-config-file), and pass that file to your command with `-config`:
+
+```hcl title="threatcl-config.hcl"
+allow_remote_imports = true
+```
+
+```bash title="terminal"
+$ threatcl validate -config=threatcl-config.hcl my-threatmodel.hcl
+```
+
+Only enable this for threat models you trust. Local file references are always permitted, regardless of this setting.
+
+### Fetching remote files
+
+With remote imports enabled, `threatcl` uses https://github.com/hashicorp/go-getter for fetching files. This means that it can download natively over HTTPS, Git, Mercurial, S3 or GCP.
 
 Sometimes `go-getter`'s protocol handling may need to be explicitly set. For instance:
 
@@ -29,3 +53,9 @@ We've wrapped the function slightly to handle the use-case of downloading an ent
 ```hcl
 imports = ["github.com/threatcl/threatcl|examples/aws-security-checklist.hcl"]
 ```
+
+The file named after the `|` must sit inside the downloaded content. A path that escapes it is rejected.
+
+### Network restrictions
+
+Even with `allow_remote_imports = true`, `http` and `https` fetches refuse to connect to loopback (`127.0.0.0/8`, `::1`), link-local (`169.254.0.0/16`, `fe80::/10`) and unspecified addresses. This blocks cloud metadata endpoints such as `169.254.169.254`. Private RFC1918 ranges are deliberately still allowed, so internal git and http servers remain valid import sources.

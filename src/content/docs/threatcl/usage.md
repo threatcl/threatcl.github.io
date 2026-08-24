@@ -11,12 +11,16 @@ $ threatcl
 Usage: threatcl [--version] [--help] <command> [<args>]
 
 Available commands are:
+    cloud        Interact with ThreatCL Cloud services
     dashboard    Generate markdown files from existing HCL threatmodel file(s)
     dfd          Generate Data Flow Diagram PNG or DOT files from existing HCL threatmodel file(s)
     export       Export threat models into other formats
     generate     Generate an HCL Threat Model
     list         List Threatmodels found in HCL file(s)
+    lsp          Run a Language Server (LSP) over stdio
     mcp          Model Context Protocol (MCP) server for threatcl
+    mermaid      Output raw mermaid source from 'mermaid' blocks in existing HCL threatmodel file(s)
+    query        Execute GraphQL queries against threat model data
     server       Start a GraphQL API server for threat models
     terraform    Parse output from 'terraform show -json'
     validate     Validate existing HCL Threatmodel file(s)
@@ -58,6 +62,14 @@ default_uptime_dep_classification = "N"
 ```
 
 If you modify these attributes, you'll need to remember to provide the config file for other operations, as this may impact validation or dashboard creation.
+
+The config file also carries `allow_remote_imports`, which controls whether a threat model's `imports` and `including` attributes may fetch remote sources. It defaults to `false`.
+
+```hcl
+allow_remote_imports = true
+```
+
+See [External HCL Files](/specification/external-files/) for what this permits, and the restrictions that still apply when it's enabled.
 
 ## Commands
 

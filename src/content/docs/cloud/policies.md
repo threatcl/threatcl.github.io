@@ -28,7 +28,7 @@ $ threatcl cloud policy -policy-id=<uuid>
 #### Policy options
 
 - `-policy-id` — **required**. The policy ID to display
-- `-show-rego` — include the full Rego source in the output
+- `-show-source` — include the full policy source in the output. `-show-rego` is a deprecated alias for this flag
 - `-json` — output as JSON
 
 ## Creating a Policy
@@ -36,14 +36,14 @@ $ threatcl cloud policy -policy-id=<uuid>
 The `cloud policy create` command creates a new policy from a local `.rego` file.
 
 ```bash title="terminal"
-$ threatcl cloud policy create -name="Require Controls" -severity=error -rego-file=./require-controls.rego
+$ threatcl cloud policy create -name="Require Controls" -severity=error -file=./require-controls.rego
 ```
 
 #### Create options
 
 - `-name` — **required**. The policy name
 - `-severity` — **required**. Policy severity: `error`, `warning`, or `info`
-- `-rego-file` — **required**. Path to a local `.rego` file containing the policy source
+- `-file` — **required**. Path to a local `.rego` file containing the policy source. `-rego-file` is a deprecated alias for this flag
 - `-description` — optional description
 - `-category` — optional category
 - `-tags` — optional comma-separated tags
@@ -64,7 +64,7 @@ $ threatcl cloud policy update -policy-id=<uuid> -severity=warning
 - `-name` — new policy name
 - `-description` — new description
 - `-severity` — new severity: `error`, `warning`, or `info`
-- `-rego-file` — path to an updated `.rego` file
+- `-file` — path to an updated `.rego` file. `-rego-file` is a deprecated alias for this flag
 - `-category` — new category
 - `-tags` — comma-separated tags (replaces existing)
 - `-enabled` — toggle enabled (`true` or `false`)
