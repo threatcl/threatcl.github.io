@@ -31,9 +31,9 @@ $ threatcl cloud threatmodel -model-id=tm_abc123
 
 #### Threatmodel options
 
-- `-model-id` — the ID of the threat model to view
-- `-download` — download the threat model HCL to a local file
-- `-overwrite` — overwrite the local file if it already exists (used with `-download`)
+- `-model-id` - the ID of the threat model to view
+- `-download` - download the threat model HCL to a local file
+- `-overwrite` - overwrite the local file if it already exists (used with `-download`)
 
 ### Versions
 
@@ -58,9 +58,9 @@ $ threatcl cloud threatmodel versions -model-id test-example
 
 #### Versions options
 
-- `-model-id` — the ID of the threat model
-- `-download` — download a specific version
-- `-version` — the version number to download (used with `-download`)
+- `-model-id` - the ID of the threat model
+- `-download` - download a specific version
+- `-version` - the version number to download (used with `-download`)
 
 ### Delete
 
@@ -72,7 +72,7 @@ $ threatcl cloud threatmodel delete -model-id=tm_abc123
 
 #### Delete options
 
-- `-model-id` — the ID of the threat model to delete
+- `-model-id` - the ID of the threat model to delete
 
 ### Update Status
 
@@ -84,8 +84,8 @@ $ threatcl cloud threatmodel update-status -model-id=tm_abc123 -status=active
 
 #### Update Status options
 
-- `-model-id` — the ID of the threat model
-- `-status` — the new status to set
+- `-model-id` - the ID of the threat model
+- `-status` - the new status to set
 
 ## Creating Threat Models
 
@@ -97,9 +97,9 @@ $ threatcl cloud create -name "My Application" -description "My app threat model
 
 #### Create options
 
-- `-name` — the name of the new threat model
-- `-description` — a description for the threat model
-- `-upload` — path to an HCL file to upload as the initial content
+- `-name` - the name of the new threat model
+- `-description` - a description for the threat model
+- `-upload` - path to an HCL file to upload as the initial content
 
 ## Uploading HCL
 
@@ -111,11 +111,11 @@ $ threatcl cloud upload -model-id=tm_abc123 my-threatmodel.hcl
 
 #### Upload options
 
-- `-model-id` — the ID of the threat model to upload to
+- `-model-id` - the ID of the threat model to upload to
 
 ## Push
 
-The `cloud push` command is the most common way to get local threat models into the cloud. It validates the HCL file, creates the threat model if needed, and uploads the content — all in one step.
+The `cloud push` command is the most common way to get local threat models into the cloud. It validates the HCL file, creates the threat model if needed, and uploads the content, all in one step.
 
 ```bash title="terminal"
 $ threatcl cloud push model.hcl
@@ -125,9 +125,9 @@ Uploading new version to threat model 'my-app'...
 
 #### Push options
 
-- `-no-create` — skip creating a new threat model if it doesn't exist; only upload to existing models
-- `-no-update-local` — don't update the local HCL file with cloud metadata after push
-- `-ignore-linked-controls` — skip validation of linked control references
+- `-no-create` - skip creating a new threat model if it doesn't exist; only upload to existing models
+- `-no-update-local` - don't update the local HCL file with cloud metadata after push
+- `-ignore-linked-controls` - skip validation of linked control references
 
 ## Validate
 
@@ -189,7 +189,7 @@ $ threatcl cloud view -model-id=my-threat-model -org-id=<orgId>
 
 #### View options
 
-- `-model-id` — fetch and view a threat model from Threatcl Cloud by ID or slug. When set, the `<file>` argument is not required.
-- `-org-id` — organization ID to use with `-model-id`. If not provided, uses the `THREATCL_CLOUD_ORG` env var or the default from your token store.
-- `-raw` — output raw markdown instead of the formatted display
-- `-ignore-linked-controls` — skip resolving linked control references from the cloud library
+- `-model-id` - fetch and view a threat model from Threatcl Cloud by ID or slug. When set, the `<file>` argument is not required.
+- `-org-id` - organization ID to use with `-model-id`. If not provided, uses the `THREATCL_CLOUD_ORG` env var or the default from your token store.
+- `-raw` - output raw markdown instead of the formatted display
+- `-ignore-linked-controls` - skip resolving linked control references from the cloud library

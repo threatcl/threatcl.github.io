@@ -49,6 +49,24 @@ Each `threatcl` hcl file has to include one more unique `threatmodel` blocks.
       <td>_An href to a diagram. (see [diagram_link](#diagram_link))_</td>
     </tr>
     <tr>
+      <td scope="row">repository</td>
+      <td>array [`string`]</td>
+      <td></td>
+      <td>_Source code repositories this model covers. See [repository](#repository)_</td>
+    </tr>
+    <tr>
+      <td scope="row">id</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_A stable, identifier-safe handle for this model. See [id](#id)_</td>
+    </tr>
+    <tr>
+      <td scope="row">extends</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_Inherit content from another threat model. See [extends](#extends)_</td>
+    </tr>
+    <tr>
       <td scope="row">created_at</td>
       <td>`integer`</td>
       <td></td>
@@ -103,6 +121,18 @@ Each `threatcl` hcl file has to include one more unique `threatmodel` blocks.
       <td>_See [threat](#threat)_</td>
     </tr>
     <tr>
+      <td scope="row">data_flow_diagram_v2</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [data_flow_diagram_v2](#data_flow_diagram_v2)_</td>
+    </tr>
+    <tr>
+      <td scope="row">mermaid</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_See [mermaid](#mermaid)_</td>
+    </tr>
+    <tr>
       <td scope="row">including</td>
       <td>`string`</td>
       <td></td>
@@ -120,6 +150,59 @@ Each `threatcl` hcl file has to include one more unique `threatmodel` blocks.
 ### diagram_link
 
 If it ends in `.jpg` or `.png` then it will be embedded in the resultant dashboard. If this isn't set, but there is a data flow diagram, this will be automatically generated and included when running `threatcl dashboard`
+
+### repository
+
+An optional list of source code repositories that this threat model covers. Each entry is a full URL, scheme included, so a single model can point at more than one repository.
+
+```hcl
+repository = [
+  "https://github.com/example/api",
+  "https://github.com/example/worker",
+]
+```
+
+Repositories render as a `## Repositories` section in markdown output, are inherited by a threat model that pulls this one in with [including](#including), and are exported under `project.attributes.repository` in OTM.
+
+### id
+
+An optional, identifier-safe handle for the threat model. Names are arbitrary strings, so they can't be used in dotted references. An `id` gives the model a stable address that survives a rename.
+
+```hcl
+threatmodel "Tower of London" {
+  id     = "tower_of_london"
+  author = "@xntrik"
+}
+```
+
+Each segment must be lowercase letters, digits or underscores, and start with a letter. Ids may be dot-separated to namespace a model beneath a parent (`buildings.tower`) and must be unique across every file parsed together. When you don't declare one, an identifier is derived from the name (`"Tower of London"` → `tower_of_london`); only a declared id is rename-stable.
+
+See [Multiple Files](/specification/multi-file/) for namespacing rules, and [Invariants](/specification/invariants/) for where these addresses are used.
+
+### extends
+
+An optional attribute naming another threat model's declared [id](#id). The extending model inherits that model's `threat`, `information_asset`, `usecase`, `exclusion` and `third_party_dependency` blocks, plus its `attributes` block when the child declares none.
+
+```hcl
+threatmodel "Base controls" {
+  id     = "base"
+  author = "@xntrik"
+
+  threat "Credential stuffing" {
+    description = "Attackers replay leaked credentials"
+  }
+}
+
+threatmodel "Payments" {
+  id      = "base.payments"
+  extends = "base"
+  author  = "@xntrik"
+}
+```
+
+Same-named items declared on the child win over the inherited ones. Scalars (`description`, `link`, and friends), data flow diagrams and mermaid diagrams are deliberately **not** inherited, they stay per-model. Chains resolve parent-first, and both cycles and unknown targets are parse errors.
+
+See [Multiple Files](/specification/multi-file/) for using `extends` across separate files.
 
 ### attributes
 
@@ -334,12 +417,18 @@ Your `threatmodel` may include multiple `information_asset` blocks, with unique 
       <td></td>
       <td>_Where was block sourced from_<br />_i.e. terraform_</td>
     </tr>
+    <tr>
+      <td scope="row">ref</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_A reference to a library item. See [ref](#ref)_</td>
+    </tr>
   </tbody>
 </table>
 
 ## threat
 
-Your `threatmodel` may include multiple `threat` blocks. These don't have labels or identifiers. It includes the following attributes.
+Your `threatmodel` may include multiple `threat` blocks, with unique labels. Two threats in the same threat model can't share a name. It includes the following attributes.
 
 <table>
   <thead>
@@ -379,7 +468,7 @@ Your `threatmodel` may include multiple `threat` blocks. These don't have labels
       <td scope="row">information_asset_refs</td>
       <td>array [`string`]</td>
       <td></td>
-      <td>_Refer to `information_asset` blocks by their label_</td>
+      <td>_Refer to `information_asset` blocks. See [Referring to Elements](/specification/references/)_</td>
     </tr>
     <tr>
       <td scope="row">control</td>
@@ -393,12 +482,115 @@ Your `threatmodel` may include multiple `threat` blocks. These don't have labels
       <td></td>
       <td>_Allows you to import full expanded control blocks. See [imports](#imports)_</td>
     </tr>
+    <tr>
+      <td scope="row">risk</td>
+      <td>`block`</td>
+      <td></td>
+      <td>_Rate this threat's likelihood and impact. See [risk](#risk)_</td>
+    </tr>
+    <tr>
+      <td scope="row">ref</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_A reference to a library item. See [ref](#ref)_</td>
+    </tr>
   </tbody>
 </table>
 
+### risk
+
+Each `threat` may include a single optional `risk` block, rating the threat before controls are considered. `threatcl` derives a severity and a 0-100 score from that rating, then a residual view that factors in the `risk_reduction` of every implemented control.
+
+```hcl
+threat "Credential stuffing" {
+  description = "Attackers replay leaked credentials against the login endpoint"
+
+  risk {
+    likelihood = "high"
+    impact     = "very_high"
+    rationale  = "Credentials for this user base appear in known breach corpora"
+  }
+
+  control "MFA" {
+    description    = "Multi-factor authentication on all accounts"
+    implemented    = true
+    risk_reduction = 80
+  }
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">likelihood</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_`very_low`, `low`, `medium`, `high`, `very_high`_</td>
+    </tr>
+    <tr>
+      <td scope="row">impact</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_`very_low`, `low`, `medium`, `high`, `very_high`_</td>
+    </tr>
+    <tr>
+      <td scope="row">severity</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_Override the computed severity: `info`, `low`, `medium`, `high`, `critical`_</td>
+    </tr>
+    <tr>
+      <td scope="row">rationale</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_Free text explaining the rating_</td>
+    </tr>
+  </tbody>
+</table>
+
+`likelihood` and `impact` are normalised, so `"Very High"`, `"very-high"` and `"very_high"` all mean the same thing.
+
+#### Severity matrix
+
+Unless you set `severity` explicitly, it's computed from likelihood x impact:
+
+| Likelihood \ Impact | very_low | low | medium | high | very_high |
+| --- | --- | --- | --- | --- | --- |
+| **very_high** | low | medium | high | critical | critical |
+| **high** | low | medium | high | high | critical |
+| **medium** | low | low | medium | high | high |
+| **low** | info | low | low | medium | high |
+| **very_low** | info | info | low | low | medium |
+
+#### Scores and residual risk
+
+Each level also carries a numeric weight (`very_low` 10, `low` 30, `medium` 50, `high` 75, `very_high` 95) and the inherent score is those two weights multiplied as percentages, back onto a 0-100 scale. A `high` likelihood with a `very_high` impact scores 0.75 x 0.95, or 71.2.
+
+The residual score applies the `risk_reduction` of every **implemented** control to that inherent score, with diminishing returns: two controls reducing risk by 50% each leave 25% of the risk, not 0%. Unimplemented controls don't reduce anything. The residual score maps onto a band of its own: 75+ is `critical`, 50+ `high`, 25+ `medium`, 10+ `low`, below that `info`.
+
+The threat above renders in `threatcl view` and `threatcl dashboard` as:
+
+```markdown
+> Risk: Likelihood _high_ × Impact _very_high_ → Inherent Severity **critical** (score 71.2)
+>
+> Credentials for this user base appear in known breach corpora
+
+> Residual Risk (after implemented controls): score 14.2 (**low**, 80% reduced)
+```
+
+Risk ratings are also exposed by the [GraphQL API](/graphql/overview/), and `likelihood`/`impact` map onto a threat's `risk` object when exporting to OTM.
+
 ### control
 
-Your `threat` blocks may include multiple `control` blocks, with unique labels. It includes the following attributes.
+Your `threat` blocks may include multiple `control` blocks, with unique labels. Two controls within the same threat can't share a name. It includes the following attributes.
 
 <table>
   <thead>
@@ -439,6 +631,12 @@ Your `threat` blocks may include multiple `control` blocks, with unique labels. 
       <td>`integer`</td>
       <td></td>
       <td>_How much this control reduces risk_</td>
+    </tr>
+    <tr>
+      <td scope="row">ref</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_A reference to a library item. See [ref](#ref)_</td>
     </tr>
     <tr>
       <td scope="row">attribute</td>
@@ -483,6 +681,8 @@ Your `expanded_control` blocks may include multiple `attribute` blocks, with uni
 Your `threatmodel` may include multiple `data_flow_diagram_v2` blocks, with unique labels. It includes the following attributes.
 
 Unlike other blocks, when you define a `process`, `data_store`, or `external_element` they must have a globally unique label, for that particular dfd. For example, you can't have a `process` and `data_store` called "foo".
+
+Elements refer to each other by label; a flow's `from` and `to`, a data store's `information_asset`, an element's `trust_zone`. Each of those also accepts a slug or a dotted expression, such as `process.web_app`. See [Referring to Elements](/specification/references/).
 
 <table>
   <thead>
@@ -708,6 +908,58 @@ Your `data_flow_diagram_v2` block may include multiple `flow` blocks. A `flow` m
   </tbody>
 </table>
 
+## mermaid
+
+Your `threatmodel` may include multiple `mermaid` blocks, with unique labels, for embedding free-form [mermaid](https://mermaid.js.org/) diagrams. Unlike [data_flow_diagram_v2](#data_flow_diagram_v2), which `threatcl` draws for you from elements and flows. A `mermaid` block carries raw mermaid source verbatim, so any diagram type works.
+
+```hcl
+mermaid "Login sequence" {
+  description = "How a user authenticates"
+
+  content = <<-EOT
+    sequenceDiagram
+      User->>App: credentials
+      App->>Auth: verify
+      Auth-->>App: token
+  EOT
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The diagram's title_</td>
+    </tr>
+    <tr>
+      <td scope="row">content</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The raw mermaid source. A heredoc is the idiomatic form_</td>
+    </tr>
+    <tr>
+      <td scope="row">description</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_Describe the diagram_</td>
+    </tr>
+  </tbody>
+</table>
+
+There's no type or engine attribute, mermaid infers the diagram type from the first line of `content`.
+
+These render into the markdown produced by `threatcl dashboard` and `threatcl view`, and are carried through the json, hcl and OTM exports. To pull the raw source back out (to pipe into a renderer such as `mmdc`, for instance) use the `threatcl mermaid` command.
+
 ## including
 
 Each `threatmodel` may optionally include an `including` attribute `string` that refers to a single other `threatcl` hcl file.
@@ -810,3 +1062,76 @@ threat {
 ```
 
 See [External HCL Files](/specification/external-files/) for more information on how to refer to external files.
+
+## ref
+
+The `information_asset`, `threat` and `control` blocks each accept an optional `ref` attribute: a reference to an item in a shared library, rather than a copy of it.
+
+```hcl
+threat "SQL Injection" {
+  description = "Untrusted input reaches the database driver"
+  ref         = "T-SQLI"
+
+  control "Parameterized Queries" {
+    description = "All queries use bound parameters"
+    ref         = "C-PQUERY"
+    implemented = true
+  }
+}
+```
+
+To `threatcl` itself a `ref` is just a string, and the file stays valid without a library to resolve it against. [Threatcl Cloud](/cloud/library/) uses these to link a model to its organization's threat, control and information asset libraries. `threatcl cloud view` and `threatcl cloud export` resolve each `ref` and fill in the library's description, STRIDE, implementation guidance, risk reduction and classification. Values you set locally always win over the library's.
+
+## backend
+
+A `backend` block sits at the top level of a file, outside your `threatmodel` blocks, and links the file to [Threatcl Cloud](/cloud/overview/).
+
+```hcl
+backend "threatcl-cloud" {
+  organization = "acme"
+  threatmodel  = "my-app"
+}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th scope="col">Attribute</th>
+      <th scope="col">Type</th>
+      <th scope="col">Required</th>
+      <th scope="col">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td scope="row">_NAME_</td>
+      <td>**label** `string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The backend's name, i.e. `threatcl-cloud`_</td>
+    </tr>
+    <tr>
+      <td scope="row">organization</td>
+      <td>`string`</td>
+      <td><Icon name="approve-check" /></td>
+      <td>_The organization this model belongs to_</td>
+    </tr>
+    <tr>
+      <td scope="row">threatmodel</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_The cloud threat model slug_</td>
+    </tr>
+    <tr>
+      <td scope="row">project</td>
+      <td>`string`</td>
+      <td></td>
+      <td>_An optional project_</td>
+    </tr>
+  </tbody>
+</table>
+
+A file may declare at most one `backend` block.
+
+:::note
+The `segment` attribute was removed in spec `0.6.0`. `segment = "..."` is now an "Unsupported argument" parse error. A multi-file model is keyed by each file's [id](#id) instead. See [Multiple Files](/specification/multi-file/).
+:::

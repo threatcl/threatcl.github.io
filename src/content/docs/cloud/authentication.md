@@ -12,14 +12,14 @@ The `cloud login` command authenticates you with Threatcl Cloud using a device f
 $ threatcl cloud login
 ```
 
-Tokens are scoped to a single organization and are saved to your OS keychain (or settings file) for subsequent commands. You choose which organization to authenticate against in the browser, not on the command line — to authenticate with more than one, run `cloud login` again and select a different organization.
+Tokens are scoped to a single organization and are saved to your OS keychain (or settings file) for subsequent commands. You choose which organization to authenticate against in the browser, not on the command line. To authenticate with more than one, run `cloud login` again and select a different organization.
 
 The API endpoint used to authenticate is saved alongside the token, and later cloud commands use that endpoint for that organization. This means tokens for different deployments can live side by side in the token store.
 
 ### Login options
 
-- `-target=<host>` — the Threatcl Cloud deployment to authenticate against, given as its web host (e.g. `beta.threatcl.com`). The API endpoint is derived from it automatically (e.g. `beta-api.threatcl.com`)
-- `-api-url=<url>` — the exact API endpoint to authenticate against (e.g. `https://beta-api.threatcl.com`). Use this when the `-target` mapping doesn't fit. Cannot be combined with `-target`
+- `-target=<host>`: the Threatcl Cloud deployment to authenticate against, given as its web host (e.g. `beta.threatcl.com`). The API endpoint is derived from it automatically (e.g. `beta-api.threatcl.com`)
+- `-api-url=<url>`: the exact API endpoint to authenticate against (e.g. `https://beta-api.threatcl.com`). Use this when the `-target` mapping doesn't fit. Cannot be combined with `-target`
 
 ## Logout
 
@@ -31,8 +31,8 @@ $ threatcl cloud logout
 
 #### Logout options
 
-- `-org-id` — remove the token for a specific organization only
-- `-all` — remove all stored tokens for all organizations
+- `-org-id`: remove the token for a specific organization only
+- `-all`: remove all stored tokens for all organizations
 
 ## Whoami
 
@@ -88,9 +88,9 @@ The command auto-detects which organization the token belongs to by querying the
 
 #### Token Add options
 
-- `-token` — the API token to add. If not provided, you will be prompted to enter it
-- `-target=<host>` — the deployment the token belongs to, given as its web host (e.g. `beta.threatcl.com`). The API endpoint is derived automatically
-- `-api-url=<url>` — the exact API endpoint the token belongs to. Cannot be combined with `-target`
+- `-token`: the API token to add. If not provided, you will be prompted to enter it
+- `-target=<host>`: the deployment the token belongs to, given as its web host (e.g. `beta.threatcl.com`). The API endpoint is derived automatically
+- `-api-url=<url>`: the exact API endpoint the token belongs to. Cannot be combined with `-target`
 
 ### Token Default
 
@@ -106,7 +106,7 @@ $ threatcl cloud token default 550e8400-e29b-41d4-a716-446655440000
 
 #### Token Default arguments
 
-- `[org-id]` — the organization ID to set as the default, given as a positional argument. Without it, the current default is displayed
+- `[org-id]`: the organization ID to set as the default, given as a positional argument. Without it, the current default is displayed
 
 ### Token Remove
 
@@ -120,11 +120,11 @@ If the removed organization was set as the default, the default is cleared. If o
 
 #### Token Remove arguments
 
-- `<org-id>` — the organization ID whose token should be removed, given as a positional argument (required)
+- `<org-id>`: the organization ID whose token should be removed, given as a positional argument (required)
 
 ## Token Resolution Priority
 
-When a cloud command needs an authentication token, it first checks the `THREATCL_API_TOKEN` environment variable. If that is set, the token is used directly and the local token store is bypassed entirely — the organization then comes from the command's `-org-id` flag, falling back to the `THREATCL_CLOUD_ORG` environment variable.
+When a cloud command needs an authentication token, it first checks the `THREATCL_API_TOKEN` environment variable. If that is set, the token is used directly and the local token store is bypassed entirely. The organization then comes from the command's `-org-id` flag, falling back to the `THREATCL_CLOUD_ORG` environment variable.
 
 Otherwise the token is read from the local token store, and the organization is selected in this order:
 

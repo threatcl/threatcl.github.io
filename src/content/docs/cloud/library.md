@@ -14,11 +14,11 @@ $ threatcl cloud library import my-library.hcl
 
 #### Import options
 
-- `-mode` — controls how imports are handled:
-  - `create-only` — only create new items, skip items that already exist (default)
-  - `update` — create new items and update existing items
-  - `replace` — replace all existing library items with the contents of the file
-- `-json` — output the import results as JSON
+- `-mode`: controls how imports are handled:
+  - `create-only`: only create new items, skip items that already exist (default)
+  - `update`: create new items and update existing items
+  - `replace`: replace all existing library items with the contents of the file
+- `-json`: output the import results as JSON
 
 ```bash title="terminal"
 $ threatcl cloud library import -mode=update my-library.hcl

@@ -14,8 +14,8 @@ $ threatcl cloud policies
 
 #### Policies options
 
-- `-enabled-only` — filter to enabled policies only
-- `-json` — output as JSON
+- `-enabled-only` - filter to enabled policies only
+- `-json` - output as JSON
 
 ## Viewing a Policy
 
@@ -27,9 +27,9 @@ $ threatcl cloud policy -policy-id=<uuid>
 
 #### Policy options
 
-- `-policy-id` — **required**. The policy ID to display
-- `-show-source` — include the full policy source in the output. `-show-rego` is a deprecated alias for this flag
-- `-json` — output as JSON
+- `-policy-id` - **required**. The policy ID to display
+- `-show-source` - include the full policy source in the output. `-show-rego` is a deprecated alias for this flag
+- `-json` - output as JSON
 
 ## Creating a Policy
 
@@ -41,14 +41,14 @@ $ threatcl cloud policy create -name="Require Controls" -severity=error -file=./
 
 #### Create options
 
-- `-name` — **required**. The policy name
-- `-severity` — **required**. Policy severity: `error`, `warning`, or `info`
-- `-file` — **required**. Path to a local `.rego` file containing the policy source. `-rego-file` is a deprecated alias for this flag
-- `-description` — optional description
-- `-category` — optional category
-- `-tags` — optional comma-separated tags
-- `-enabled` — enable the policy on creation (default: `true`)
-- `-json` — output as JSON
+- `-name` - **required**. The policy name
+- `-severity` - **required**. Policy severity: `error`, `warning`, or `info`
+- `-file` - **required**. Path to a local `.rego` file containing the policy source. `-rego-file` is a deprecated alias for this flag
+- `-description` - optional description
+- `-category` - optional category
+- `-tags` - optional comma-separated tags
+- `-enabled` - enable the policy on creation (default: `true`)
+- `-json` - output as JSON
 
 ## Updating a Policy
 
@@ -60,16 +60,16 @@ $ threatcl cloud policy update -policy-id=<uuid> -severity=warning
 
 #### Update options
 
-- `-policy-id` — **required**. The policy ID to update
-- `-name` — new policy name
-- `-description` — new description
-- `-severity` — new severity: `error`, `warning`, or `info`
-- `-file` — path to an updated `.rego` file. `-rego-file` is a deprecated alias for this flag
-- `-category` — new category
-- `-tags` — comma-separated tags (replaces existing)
-- `-enabled` — toggle enabled (`true` or `false`)
-- `-enforced` — toggle enforced (`true` or `false`)
-- `-json` — output as JSON
+- `-policy-id` - **required**. The policy ID to update
+- `-name` - new policy name
+- `-description` - new description
+- `-severity` - new severity: `error`, `warning`, or `info`
+- `-file` - path to an updated `.rego` file. `-rego-file` is a deprecated alias for this flag
+- `-category` - new category
+- `-tags` - comma-separated tags (replaces existing)
+- `-enabled` - toggle enabled (`true` or `false`)
+- `-enforced` - toggle enforced (`true` or `false`)
+- `-json` - output as JSON
 
 ## Deleting a Policy
 
@@ -81,8 +81,8 @@ $ threatcl cloud policy delete -policy-id=<uuid>
 
 #### Delete options
 
-- `-policy-id` — **required**. The policy ID to delete
-- `-force` — skip confirmation prompt
+- `-policy-id` - **required**. The policy ID to delete
+- `-force` - skip confirmation prompt
 
 ## Validating a Rego File
 
@@ -94,11 +94,11 @@ $ threatcl cloud policy validate my-policy.rego
 
 #### Validate options
 
-- `-json` — output as JSON
+- `-json` - output as JSON
 
 ## Evaluating Policies
 
-The `cloud policy evaluate` command triggers policy evaluation against a threat model. This is designed for CI/CD integration — use `-fail-on-error` or `-fail-on-warning` to control exit codes based on evaluation results.
+The `cloud policy evaluate` command triggers policy evaluation against a threat model. This is designed for CI/CD integration - use `-fail-on-error` or `-fail-on-warning` to control exit codes based on evaluation results.
 
 ```bash title="terminal"
 $ threatcl cloud policy evaluate -model-id=my-app
@@ -106,10 +106,10 @@ $ threatcl cloud policy evaluate -model-id=my-app
 
 #### Evaluate options
 
-- `-model-id` — **required**. The threat model ID to evaluate policies against
-- `-fail-on-error` — exit with code 1 if any policy with severity `error` fails
-- `-fail-on-warning` — exit with code 1 if any policy with severity `warning` or `error` fails
-- `-json` — output as JSON
+- `-model-id` - **required**. The threat model ID to evaluate policies against
+- `-fail-on-error` - exit with code 1 if any policy with severity `error` fails
+- `-fail-on-warning` - exit with code 1 if any policy with severity `warning` or `error` fails
+- `-json` - output as JSON
 
 ### CI/CD Usage
 
@@ -131,8 +131,8 @@ $ threatcl cloud policy evaluations -model-id=my-app
 
 #### Evaluations options
 
-- `-model-id` — **required**. The threat model ID
-- `-json` — output as JSON
+- `-model-id` - **required**. The threat model ID
+- `-json` - output as JSON
 
 ### Viewing a Single Evaluation
 
@@ -144,15 +144,15 @@ $ threatcl cloud policy evaluation -model-id=my-app -eval-id=<evalId>
 
 #### Evaluation options
 
-- `-model-id` — **required**. The threat model ID
-- `-eval-id` — **required**. The evaluation ID to view
-- `-json` — output as JSON
+- `-model-id` - **required**. The threat model ID
+- `-eval-id` - **required**. The evaluation ID to view
+- `-json` - output as JSON
 
 ## Common Options
 
 All policy commands support these options:
 
-- `-org-id` — organization ID. If not provided, uses the `THREATCL_CLOUD_ORG` environment variable or the first organization from your user profile
-- `-config` — path to an optional config file
+- `-org-id` - organization ID. If not provided, uses the `THREATCL_CLOUD_ORG` environment variable or the first organization from your user profile
+- `-config` - path to an optional config file
 
 See the [Cloud Overview](/cloud/overview/) for details on environment variables like `THREATCL_API_URL`, `THREATCL_CLOUD_ORG`, and `THREATCL_API_TOKEN`.

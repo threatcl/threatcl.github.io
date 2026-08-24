@@ -12,7 +12,7 @@ You can refer to a local file simply by providing the path to the file.
 including = "shared/city-threatmodel.hcl"
 ```
 
-Local references are contained to the directory of the file that refers to them. A reference that resolves outside that directory — whether via `../` traversal or an absolute `file:///etc/passwd` style path — is rejected with `local import '<source>' resolves outside the directory of the referring file`. Parsing a threat model can't be used to read arbitrary files off the host.
+Local references are contained to the directory of the file that refers to them. A reference that resolves outside that directory, whether via `../` traversal or an absolute `file:///etc/passwd` style path, is rejected with `local import '<source>' resolves outside the directory of the referring file`. Parsing a threat model can't be used to read arbitrary files off the host.
 
 ## Remote file reference
 
