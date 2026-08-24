@@ -88,6 +88,17 @@ Validated 3 threatmodels in 3 files
 
 If you want to pipe input into `validate` you can do so with with `-stdin` or `-stdinjson` flag. This is useful for pipelining commands together.
 
+The `-invariants=<file>` flag additionally evaluates a file of [invariants](/specification/invariants/) (org-wide rules such as "every threat must have at least one implemented control") against every model that validated. Violations name the offending item, and an `error`-severity violation fails the run.
+
+```bash title="terminal"
+$ threatcl validate -invariants=invariants.hcl ./models/
+Validated 4 threatmodels in 3 files
+Invariant violation [error] 'threats_have_implemented_controls': threat 'Credential theft' in threatmodel 'Payments' (models/payments.hcl): Every threat must have at least one implemented control
+Checked 3 invariants against 4 threatmodels: 1 errors, 0 warnings, 1 exemptions
+```
+
+This works with `-stdin` and `-stdinjson` too, where violations are attributed to `STDIN`. See [Invariants](/specification/invariants/) for the rule language, exit codes, and how to roll a rule out from `warning` to `error`.
+
 ### List
 
 The `threatcl list` command can be used to list threat models from a selection of hcl files.
@@ -117,9 +128,21 @@ You can also adjust the available columns with `-fields` flag. For example, by p
 * `internetfacing`
 * `newinitiative`
 * `dfd`
+* `repository`
+* `riskcount`
+* `highestseverity`
 * `author`
 
 By default it'll be as if you provided `-fields=number,file,threatmodel,author`
+
+`riskcount` counts the threats carrying a [risk](/specification/threatmodel/#risk) block, and `highestseverity` is the most severe inherent rating among them, which makes this a quick way to triage a folder of models:
+
+```bash title="terminal"
+$ threatcl list -fields=number,file,threatmodel,riskcount,highestseverity,repository ./models/*.hcl
+#  File           Threatmodel  Risk Count  Highest Severity  Repository
+1  payments.hcl   Payments     2           critical          https://github.com/example/payments
+2  reporting.hcl  Reporting    0           -                 -
+```
 
 ### View
 
@@ -203,6 +226,8 @@ The `dashboard` command takes a number of options, and allows for you to customi
 
 - If you want to overwrite the target folder provide the `-overwrite` flag.
 
+Any [mermaid](/specification/threatmodel/#mermaid) blocks in your threat models are rendered into the generated markdown, alongside data flow diagrams.
+
 #### Dashboard templates
 
 You can fully customise the templates used to generate `dashboard` output. By default this uses Golang's [text/template](https://pkg.go.dev/text/template) package.
@@ -241,6 +266,34 @@ Successfully created 'testout/tm2-modellymodel.png'
 - `-overwrite` flag can optionally be added to overwrite any output content.
 
 - `-protocol-style` controls how to render the optional data flow `protocol` attribute. By default this will be `label`, but can optionally be set to `color` to color each flow's edge by protocol and emit a legend. `-protocol-style` can also be `none` or `both`. Both allows you to label the flow and color-code.
+
+### Mermaid
+
+As well as data flow diagrams, a `threatmodel` may include [mermaid](/specification/threatmodel/#mermaid) blocks holding raw [mermaid](https://mermaid.js.org/) source. The `threatcl mermaid` command pulls that source back out.
+
+Unlike `threatcl dfd`, it doesn't render anything, it emits the verbatim mermaid content, so you can pipe it into a renderer such as [mermaid-cli](https://github.com/mermaid-js/mermaid-cli):
+
+```bash title="terminal"
+$ threatcl mermaid my-threatmodel.hcl
+sequenceDiagram
+  User->>App: credentials
+  App->>Auth: verify
+  Auth-->>App: token
+
+$ threatcl mermaid my-threatmodel.hcl | mmdc -o login.png
+```
+
+#### Mermaid options
+
+- By default the source is printed to STDOUT. That's the same as setting `-stdout` explicitly.
+
+- `-outdir=<directory>` writes one `.mmd` file per mermaid block, creating the directory if it doesn't exist.
+
+- `-out=<filename>` writes a single mermaid block to one file.
+
+- When a file holds several mermaid blocks and you're writing to STDOUT or a single `-out` file, select one with `-index=<n>`, counting from 1.
+
+- `-overwrite` will overwrite existing output files.
 
 ### Terraform
 
@@ -343,6 +396,67 @@ You don't typically start this in an interactive terminal, instead, you would ad
 }
 ```
 
+### LSP
+
+The `threatcl lsp` command runs a [Language Server](https://microsoft.github.io/language-server-protocol/) over stdio, giving any LSP-capable editor live intelligence for threatcl HCL files:
+
+- **Diagnostics**: syntax errors, unknown blocks and attributes, missing required attributes, and invalid enum values (an unrecognised risk `likelihood`, say), pushed on every edit
+- **Completion**: context-aware blocks, attributes and enum values, with block completions expanding to a snippet scaffold
+- **Hover**: documentation for the block or attribute under the cursor
+- **Document symbols**: an outline of the threat models, threats, controls, information assets and data flow diagrams in the file
+- **Formatting**: canonical `hclwrite` formatting, suitable for format-on-save
+
+Like the `mcp` command, you don't run this in a terminal yourself, your editor's LSP client launches it. The protocol travels over stdin/stdout, and logs go to stderr, or to a file with `-log=<file>`.
+
+#### A note on `.hcl` files
+
+The `.hcl` extension is shared with Terraform, Packer and other HCL dialects, so a plain `*.hcl` match will start both their language server and this one on the same buffer. The cleanest fix is to name threatcl files `*.tm.hcl` and match on that suffix, as the examples below do. Alternatively, scope the threatcl client so it only starts in your threat model projects.
+
+#### Neovim (0.8+)
+
+```lua
+vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+  pattern = "*.tm.hcl",
+  callback = function(args)
+    vim.lsp.start({
+      name = "threatcl",
+      cmd = { "threatcl", "lsp" },
+      root_dir = vim.fs.dirname(args.file),
+    })
+  end,
+})
+```
+
+#### Helix
+
+In `languages.toml`:
+
+```toml
+[language-server.threatcl]
+command = "threatcl"
+args = ["lsp"]
+
+[[language]]
+name = "threatcl"
+scope = "source.hcl"
+file-types = [{ glob = "*.tm.hcl" }]
+roots = []
+language-servers = ["threatcl"]
+```
+
+#### VS Code and Zed
+
+Neither has a published extension yet. In the meantime, VS Code can use a generic LSP bridge extension pointed at `threatcl lsp` and scoped to `*.tm.hcl`; an early development version lives in the [editors folder](https://github.com/threatcl/threatcl/tree/main/editors) of the threatcl repo. A small Zed extension is the planned path there.
+
+#### Known limitations
+
+These are scoping decisions rather than bugs:
+
+- `-config` doesn't affect the language server yet. The flag is accepted and validated, but diagnostics and completion use the built-in spec enum defaults rather than your overrides.
+- Validations keyed on names rather than source positions (duplicate names, `information_asset_refs` existence, data flow diagram wiring) aren't surfaced as diagnostics. `threatcl validate` still catches them.
+- The whole document is re-read on each change, which is comfortably fast at threat model sizes.
+- No go-to-definition, references, rename or semantic tokens yet.
+
 ### Server (GraphQL API)
 
 The `threatcl server` command starts a GraphQL API server that exposes your threat models via HTTP for programmatic querying and integration.
@@ -360,4 +474,56 @@ For more detailed information, refer to:
 
 - Optionally you can set the listening TCP port with `-port=<number>`. By default it will listen on `8080`
 
+- The server binds to `127.0.0.1` by default. It exposes every loaded threat model without authentication, so only change this deliberately. `-listen=0.0.0.0` will serve that data on all interfaces.
+
 - Optionally you can also enable Watching for file changes, and reloading the cache. This is not enabled by default, to enable it, set the `-watch` flag.
+
+### Query (GraphQL)
+
+The `threatcl query` command runs a GraphQL query against your threat models and prints the result, without starting a server. It loads the same data `threatcl server` does, so anything you can ask the API you can ask here. This is useful in a script or a CI job.
+
+```bash title="terminal"
+$ threatcl query -dir ./models -query '{ stats { totalThreatModels totalThreats threatsWithRisk } }'
+{
+  "data": {
+    "stats": {
+      "threatsWithRisk": 2,
+      "totalThreatModels": 2,
+      "totalThreats": 3
+    }
+  },
+  "errors": null
+}
+```
+
+The query itself can come from three places, in order of precedence: the `-query` flag, a file named with `-file`, or STDIN when neither is set.
+
+```bash title="terminal"
+$ echo '{ threatModels { name author } }' | threatcl query -dir ./models -output compact
+{"data":{"threatModels":[{"name":"Payments","author":"@xntrik"}]},"errors":null}
+```
+
+Variables are passed as JSON:
+
+```bash title="terminal"
+$ threatcl query -dir ./models -output compact \
+    -query 'query TM($name: String!) { threatModel(name: $name) { name author } }' \
+    -vars '{"name":"Payments"}'
+{"data":{"threatModel":{"author":"@xntrik","name":"Payments"}},"errors":null}
+```
+
+#### Query options
+
+- You must specify a directory of HCL (or JSON) threat model files with `-dir=<path>`
+
+- `-query=<string>` is an inline GraphQL query. Mutually exclusive with `-file`
+
+- `-file=<path>` reads the query from a file. Mutually exclusive with `-query`
+
+- `-vars=<json>` supplies JSON-encoded variables for the query
+
+- `-output=<format>` is one of `pretty` (the default), `json`, or `compact`
+
+- `-examples` prints a set of example invocations
+
+For the schema itself, the types, fields and filters you can query, see the [GraphQL Overview](/graphql/overview/) and [Example Queries](/graphql/example-queries/).

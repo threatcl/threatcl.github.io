@@ -4,6 +4,8 @@ title: Threatcl GraphQL API
 
 The threatcl GraphQL API provides a powerful, flexible way to query and analyze your threat models. The API is served by the `threatcl server` command and exposes all threat model data through a type-safe GraphQL interface.
 
+The same schema is available without a server: [`threatcl query`](/threatcl/usage/#query-graphql) runs a single query against a directory of threat models and prints the result, which suits scripts and CI jobs.
+
 ## Getting Started
 
 ### Starting the Server
@@ -18,6 +20,8 @@ threatcl server -dir ./examples -port 3000
 # With file watching for auto-reload
 threatcl server -dir ./examples -watch
 ```
+
+The server binds to `127.0.0.1` by default. It serves every loaded threat model without authentication, so expose it on other interfaces (`-listen=0.0.0.0`) only deliberately.
 
 ### Accessing the API
 
