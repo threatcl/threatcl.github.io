@@ -37,7 +37,9 @@ The GraphQL schema is organized around the following main types:
 - `Threat` - Individual threats within a threat model
 - `Control` - Security controls (mitigations) for threats
 - `InformationAsset` - Data assets being protected
+- `RiskRating` - Optional risk rating attached to a threat, with inherent and residual scores
 - `DataFlowDiagram` - Data flow diagrams (DFDs) for visualizing system architecture
+- `MermaidDiagram` - Free-form mermaid diagrams embedded in a threat model
 - `Statistics` - Aggregated statistics across all threat models
 
 ## Query Reference
@@ -114,9 +116,11 @@ threats(filter: ThreatFilter): [Threat!]!
 
 **Arguments:**
 - `filter` (optional): Filter criteria
+  - `name`: String - Filter by threat name
   - `impacts`: [String!] - Filter by impact types (e.g., ["Confidentiality", "Integrity"])
   - `stride`: [String!] - Filter by STRIDE categories (e.g., ["Spoofing", "Tampering"])
   - `hasImplementedControls`: Boolean - Filter threats with/without implemented controls
+  - `severity`: [String!] - Filter by resolved inherent severity (`info`, `low`, `medium`, `high`, `critical`)
 
 **Example:**
 ```graphql
@@ -178,6 +182,11 @@ query {
     totalControls
     implementedControls
     averageRiskReduction
+    threatsWithRisk
+    severityCounts {
+      severity
+      count
+    }
   }
 }
 ```
@@ -196,19 +205,23 @@ type ThreatModel {
   description: String
   link: String
   diagramLink: String
+  repository: [String!]
   createdAt: Int
   updatedAt: Int
   attributes: Attributes
-  additionalAttributes: [AdditionalAttribute!]!
+  additionalAttributes: [AdditionalAttribute!]
   informationAssets: [InformationAsset!]!
   threats: [Threat!]!
   useCases: [UseCase!]!
   exclusions: [Exclusion!]!
   thirdPartyDependencies: [ThirdPartyDependency!]!
   dataFlowDiagrams: [DataFlowDiagram!]!
+  mermaidDiagrams: [MermaidDiagram!]!
   sourceFile: String!
 }
 ```
+
+`repository` holds the model's [repository](/specification/threatmodel/#repository) URLs, and `sourceFile` is the file the model was loaded from.
 
 ### Attributes
 
@@ -230,17 +243,61 @@ Represents a security threat.
 **Fields:**
 ```graphql
 type Threat {
+  name: String!
   description: String!
-  impacts: [String!]!
-  stride: [String!]!
+  impacts: [String!]
+  stride: [String!]
   controls: [Control!]!
-  informationAssetRefs: [String!]!
+  informationAssetRefs: [String!]
+  risk: RiskRating
   threatModel: ThreatModel!
 }
 ```
 
 **Bidirectional Reference:**
 - `threatModel` field provides reverse navigation to the parent threat model
+
+### RiskRating
+
+The optional [risk rating](/specification/threatmodel/#risk) attached to a threat. `risk` is `null` for threats with no `risk` block.
+
+**Fields:**
+```graphql
+type RiskRating {
+  likelihood: String!
+  impact: String!
+  severity: String!
+  rationale: String
+  inherentScore: Float!
+  residualScore: Float!
+  residualSeverity: String!
+  residualRiskReduction: Float!
+}
+```
+
+- `likelihood` and `impact` are the ordinal enums: `very_low`, `low`, `medium`, `high`, `very_high`
+- `severity` is the resolved inherent band: the author's override if set, otherwise computed from the likelihood x impact matrix
+- `inherentScore` is the pre-control score, on a 0-100 scale
+- `residualScore` is that score after the risk reduction of every implemented control, with `residualSeverity` its band and `residualRiskReduction` the aggregate percentage reduction
+
+**Example:**
+```graphql
+query {
+  threats(filter: { severity: ["critical", "high"] }) {
+    name
+    risk {
+      severity
+      inherentScore
+      residualScore
+      residualSeverity
+      residualRiskReduction
+    }
+    threatModel {
+      name
+    }
+  }
+}
+```
 
 ### Control
 
@@ -254,7 +311,7 @@ type Control {
   implemented: Boolean!
   implementationNotes: String
   riskReduction: Int
-  attributes: [ControlAttribute!]!
+  attributes: [ControlAttribute!]
 }
 ```
 
@@ -292,6 +349,50 @@ type DataFlowDiagram {
 }
 ```
 
+The element lists include elements nested inside trust zones, and each element's `trustZone` field names the zone it sits in.
+
+**Fields:**
+```graphql
+type Process {
+  name: String!
+  trustZone: String
+}
+
+type DataStore {
+  name: String!
+  trustZone: String
+  informationAsset: String
+}
+
+type ExternalElement {
+  name: String!
+  trustZone: String
+}
+
+type Flow {
+  name: String!
+  from: String!
+  to: String!
+}
+
+type TrustZone {
+  name: String!
+}
+```
+
+### MermaidDiagram
+
+A free-form [mermaid diagram](/specification/threatmodel/#mermaid) embedded in a threat model. `content` is the raw mermaid source, exactly as authored.
+
+**Fields:**
+```graphql
+type MermaidDiagram {
+  name: String!
+  description: String
+  content: String!
+}
+```
+
 ### Statistics
 
 Aggregated statistics across all threat models.
@@ -305,12 +406,86 @@ type Statistics {
   totalControls: Int!
   implementedControls: Int!
   averageRiskReduction: Float
+  threatsWithRisk: Int!
+  severityCounts: [SeverityCount!]!
 }
 ```
 
 **Calculations:**
 - `averageRiskReduction` is only calculated when controls have risk reduction values > 0
 - Returns `null` if no controls have risk reduction values
+- `threatsWithRisk` counts the threats carrying a [risk](/specification/threatmodel/#risk) block
+- `severityCounts` buckets those threats by resolved inherent severity, and always returns all five bands, including the empty ones
+
+### SeverityCount
+
+The number of threats whose resolved inherent severity falls in a given band.
+
+**Fields:**
+```graphql
+type SeverityCount {
+  severity: String!
+  count: Int!
+}
+```
+
+### Supporting Types
+
+The remaining types on a threat model: its use cases, exclusions, third party dependencies, and the custom attributes on a model or a control.
+
+**Fields:**
+```graphql
+type UseCase {
+  description: String!
+}
+
+type Exclusion {
+  description: String!
+}
+
+type ThirdPartyDependency {
+  name: String!
+  description: String!
+  saas: Boolean
+  payingCustomer: Boolean
+  openSource: Boolean
+  infrastructure: Boolean
+  uptimeDependency: String!
+  uptimeNotes: String
+}
+
+type AdditionalAttribute {
+  key: String!
+  value: String!
+}
+
+type ControlAttribute {
+  name: String!
+  value: String!
+}
+```
+
+### Input Types
+
+Filters accepted by the `threatModels` and `threats` queries.
+
+**Fields:**
+```graphql
+input ThreatModelFilter {
+  author: String
+  internetFacing: Boolean
+  newInitiative: Boolean
+  initiativeSize: String
+}
+
+input ThreatFilter {
+  name: String
+  impacts: [String!]
+  stride: [String!]
+  hasImplementedControls: Boolean
+  severity: [String!]
+}
+```
 
 ## Advanced Query Examples
 
@@ -322,6 +497,7 @@ query {
     name
     author
     description
+    repository
     createdAt
     updatedAt
     sourceFile
@@ -339,9 +515,18 @@ query {
     }
 
     threats {
+      name
       description
       impacts
       stride
+      risk {
+        likelihood
+        impact
+        severity
+        inherentScore
+        residualScore
+        residualSeverity
+      }
       controls {
         name
         description
@@ -386,6 +571,12 @@ query {
       trustZones {
         name
       }
+    }
+
+    mermaidDiagrams {
+      name
+      description
+      content
     }
   }
 }
@@ -455,6 +646,11 @@ query DashboardStats {
     totalControls
     implementedControls
     averageRiskReduction
+    threatsWithRisk
+    severityCounts {
+      severity
+      count
+    }
   }
 
   allModels: threatModels {
@@ -641,6 +837,7 @@ The server is configured to allow requests from any origin (`*`). For production
 - **No Subscriptions**: Real-time updates via GraphQL subscriptions are not supported. Use file watching (`-watch` flag) for auto-reload instead.
 - **No Pagination**: Large result sets are returned in full. Consider filtering to reduce response size.
 - **In-Memory Only**: All data is stored in memory. Server restart clears the cache and reloads from files.
+- **Partial DFD Coverage**: A data flow's optional `protocol` attribute isn't exposed by the `Flow` type yet.
 
 ## Troubleshooting
 
