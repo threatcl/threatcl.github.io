@@ -380,6 +380,8 @@ You don't typically start this in an interactive terminal, instead, you would ad
 
 - You may specify an optional `-dir=<path>` flag that will expose additional MCP Tools into your environment. 
 
+This server is local: it exposes the HCL files in the directory you point it at, and needs no account. For an agent that reaches your Threatcl Cloud organization instead, see the [Claude Code Plugin](/cloud/claude-plugin/), which declares a hosted MCP server authenticated with OAuth.
+
 #### Claude Example Configuration
 
 ```json
@@ -443,6 +445,10 @@ file-types = [{ glob = "*.tm.hcl" }]
 roots = []
 language-servers = ["threatcl"]
 ```
+
+#### Claude Code
+
+The [threatcl-lsp plugin](/cloud/claude-plugin/#the-threatcl-lsp-plugin) wires this server into Claude Code, so the agent gets diagnostics while it edits a model. Claude Code matches on the final extension segment only, so that plugin claims all `*.hcl` files rather than just `*.tm.hcl`.
 
 #### VS Code and Zed
 

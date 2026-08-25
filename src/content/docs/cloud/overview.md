@@ -99,3 +99,4 @@ The `push` command validates your HCL file for cloud compatibility, creates the 
 - [Searching Threat Models](/cloud/search/) - search threats and controls across your org
 - [Libraries](/cloud/library/) - import, export, and manage shared threat, control and information asset libraries
 - [Policies](/cloud/policies/) - create, validate, and evaluate policies, written in Rego or as threatcl invariants
+- [Claude Code Plugin](/cloud/claude-plugin/) - threat modeling from inside Claude Code, over MCP
