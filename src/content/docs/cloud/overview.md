@@ -15,7 +15,7 @@ While the standard `threatcl` CLI works entirely with local HCL files, Threatcl 
 - **Centralized storage:** threat models are stored in the cloud and accessible by your team
 - **Collaboration:** multiple team members can work on threat models within the same organization
 - **Versioning:** track changes to threat models over time
-- **Threat & control libraries:** shared libraries of threats and controls that can be referenced across models
+- **Threat, control & information asset libraries:** shared libraries that can be referenced across models
 - **Search:** search across all threat models in your organization
 
 ## Organizations and Roles
@@ -48,7 +48,9 @@ threatmodel "My Application" {
 }
 ```
 
-The `backend "threatcl-cloud"` block is placed outside (before) the `threatmodel` block. It signals to the CLI that this file is intended for use with Threatcl Cloud. Commands like `cloud push` and `cloud validate` check for this block.
+The `backend "threatcl-cloud"` block is placed outside (before) the `threatmodel` block. It signals to the CLI that this file is intended for use with Threatcl Cloud. Commands like `cloud push` and `cloud validate` check for this block. See [backend](/specification/threatmodel/#backend) in the spec reference for its attributes.
+
+A cloud threat model can also be split across [several files](/cloud/threat-models/#multi-file-models), each with its own `backend` block addressing the same organization and threat model.
 
 ## Environment Variables
 
@@ -95,5 +97,5 @@ The `push` command validates your HCL file for cloud compatibility, creates the 
 - [Authentication & Tokens](/cloud/authentication/) - login, logout, token management
 - [Managing Threat Models](/cloud/threat-models/) - create, upload, push, validate, and view
 - [Searching Threat Models](/cloud/search/) - search threats and controls across your org
-- [Threat & Control Libraries](/cloud/library/) - import, export, and manage shared libraries
-- [Policies](/cloud/policies/) - create, validate, and evaluate Rego-based policies
+- [Libraries](/cloud/library/) - import, export, and manage shared threat, control and information asset libraries
+- [Policies](/cloud/policies/) - create, validate, and evaluate policies, written in Rego or as threatcl invariants

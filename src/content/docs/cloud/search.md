@@ -100,6 +100,14 @@ $ threatcl cloud search -type=controls -implemented
 $ threatcl cloud search -type=controls -implemented=false
 ```
 
+### Free-text search
+
+- `-term`: match on name and description, case-insensitive. Works for both threats and controls
+
+```bash title="terminal"
+$ threatcl cloud search -type=controls -term=encryption
+```
+
 ## Scoping
 
 By default, search operates across all threat models in your default organization. You can scope the search further:

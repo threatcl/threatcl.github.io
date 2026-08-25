@@ -55,7 +55,7 @@ export default defineConfig({
             { label: 'Authentication', link: '/cloud/authentication/' },
             { label: 'Threat Models', link: '/cloud/threat-models/' },
             { label: 'Search', link: '/cloud/search/' },
-            { label: 'Library', link: '/cloud/library/' },
+            { label: 'Libraries', link: '/cloud/library/' },
             { label: 'Policies', link: '/cloud/policies/' },
           ],
         },
