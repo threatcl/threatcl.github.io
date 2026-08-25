@@ -22,9 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: threatcl validate
-        uses: threatcl/threatcl-action@v0.0.1
+        uses: threatcl/threatcl-action@v0.0.7
         with:
           command: 'validate'
           files: './hcl-files/*'`
@@ -45,13 +45,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: threatcl dashboard
-        uses: threatcl/threatcl-action@v0.0.2
+        uses: threatcl/threatcl-action@v0.0.7
         with:
           command: 'dashboard'
           files: './hcl-files/*'
           outdir: './dashboard'
       - name: threatcl custom dashboard
-        uses: threatcl/threatcl-action@v0.0.2
+        uses: threatcl/threatcl-action@v0.0.7
         with:
           command: 'dashboard'
           files: './hcl-files/*'
@@ -60,7 +60,7 @@ jobs:
           dashboard-filename: 'db'
           threatmodel-template: './templates/threatmodel-template.tpl'
       - name: threatcl custom html dashboard
-        uses: threatcl/threatcl-action@v0.0.2
+        uses: threatcl/threatcl-action@v0.0.7
         with:
           command: 'dashboard'
           files: './hcl-files/*'

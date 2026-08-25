@@ -17,6 +17,11 @@ query GetStats {
     totalControls
     implementedControls
     averageRiskReduction
+    threatsWithRisk
+    severityCounts {
+      severity
+      count
+    }
   }
 }
 ```
@@ -566,6 +571,86 @@ const implementationRates = data.threatModels.map(tm => {
     rate: (implemented / allControls.length * 100).toFixed(1)
   };
 });
+```
+
+## Risk Queries
+
+### 23. Highest Severity Threats
+
+Find the threats rated `critical` or `high`, across every model:
+
+```graphql
+query HighestSeverityThreats {
+  threats(filter: { severity: ["critical", "high"] }) {
+    name
+    risk {
+      severity
+      likelihood
+      impact
+      rationale
+    }
+    threatModel {
+      name
+    }
+  }
+}
+```
+
+### 24. Inherent vs Residual Risk
+
+Compare each rated threat before and after its implemented controls. `risk` is `null` for threats with no risk block:
+
+```graphql
+query ResidualRisk {
+  threats {
+    name
+    risk {
+      inherentScore
+      residualScore
+      residualSeverity
+      residualRiskReduction
+    }
+    controls {
+      name
+      implemented
+      riskReduction
+    }
+  }
+}
+```
+
+### 25. Risk Posture Summary
+
+Count the rated threats and bucket them by severity. All five bands are always returned, including the empty ones:
+
+```graphql
+query RiskPosture {
+  stats {
+    totalThreats
+    threatsWithRisk
+    severityCounts {
+      severity
+      count
+    }
+  }
+}
+```
+
+### 26. Models by Repository and Diagram
+
+List each model's source repositories and any embedded mermaid diagrams:
+
+```graphql
+query ModelsWithDiagrams {
+  threatModels {
+    name
+    repository
+    mermaidDiagrams {
+      name
+      description
+    }
+  }
+}
 ```
 
 ## Tips

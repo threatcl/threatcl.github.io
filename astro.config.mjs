@@ -26,6 +26,9 @@ export default defineConfig({
           items: [
             { label: 'Syntax Overview', link: '/specification/overview/' },
             { label: 'Threatmodel Block', link: '/specification/threatmodel/' },
+            { label: 'Referring to Elements', link: '/specification/references/' },
+            { label: 'Multiple Files', link: '/specification/multi-file/' },
+            { label: 'Invariants', link: '/specification/invariants/' },
             { label: 'External HCL Files', link: '/specification/external-files/' },
             { label: 'Example Threat Model', link: '/specification/example/' },
             { label: "Full Spec", link :'/specification/full-spec/' },
@@ -52,7 +55,7 @@ export default defineConfig({
             { label: 'Authentication', link: '/cloud/authentication/' },
             { label: 'Threat Models', link: '/cloud/threat-models/' },
             { label: 'Search', link: '/cloud/search/' },
-            { label: 'Library', link: '/cloud/library/' },
+            { label: 'Libraries', link: '/cloud/library/' },
             { label: 'Policies', link: '/cloud/policies/' },
           ],
         },

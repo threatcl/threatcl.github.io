@@ -31,9 +31,9 @@ $ threatcl cloud threatmodel -model-id=tm_abc123
 
 #### Threatmodel options
 
-- `-model-id` — the ID of the threat model to view
-- `-download` — download the threat model HCL to a local file
-- `-overwrite` — overwrite the local file if it already exists (used with `-download`)
+- `-model-id` - the ID of the threat model to view
+- `-download` - download the threat model HCL to a local file
+- `-overwrite` - overwrite the local file if it already exists (used with `-download`)
 
 ### Versions
 
@@ -58,9 +58,10 @@ $ threatcl cloud threatmodel versions -model-id test-example
 
 #### Versions options
 
-- `-model-id` — the ID of the threat model
-- `-download` — download a specific version
-- `-version` — the version number to download (used with `-download`)
+- `-model-id` - the ID of the threat model
+- `-download` - download a specific version to the named file
+- `-version` - the version number to download, such as `1.0.3`. Required with `-download`
+- `-overwrite` - overwrite the local file if it already exists
 
 ### Delete
 
@@ -72,20 +73,20 @@ $ threatcl cloud threatmodel delete -model-id=tm_abc123
 
 #### Delete options
 
-- `-model-id` — the ID of the threat model to delete
+- `-model-id` - the ID of the threat model to delete
 
 ### Update Status
 
 The `cloud threatmodel update-status` command changes the status of a threat model.
 
 ```bash title="terminal"
-$ threatcl cloud threatmodel update-status -model-id=tm_abc123 -status=active
+$ threatcl cloud threatmodel update-status -model-id=tm_abc123 -status=approved
 ```
 
 #### Update Status options
 
-- `-model-id` — the ID of the threat model
-- `-status` — the new status to set
+- `-model-id` - the ID of the threat model
+- `-status` - the new status. One of `draft`, `in_review`, `approved` or `archived`
 
 ## Creating Threat Models
 
@@ -97,9 +98,9 @@ $ threatcl cloud create -name "My Application" -description "My app threat model
 
 #### Create options
 
-- `-name` — the name of the new threat model
-- `-description` — a description for the threat model
-- `-upload` — path to an HCL file to upload as the initial content
+- `-name` - **required**. The name of the new threat model
+- `-description` - a description for the threat model
+- `-upload` - path to an HCL file to upload as the initial content. The file must contain exactly one threat model. For a [multi-file model](#multi-file-models), upload the root file here and push the child files afterwards
 
 ## Uploading HCL
 
@@ -111,11 +112,11 @@ $ threatcl cloud upload -model-id=tm_abc123 my-threatmodel.hcl
 
 #### Upload options
 
-- `-model-id` — the ID of the threat model to upload to
+- `-model-id` - the ID of the threat model to upload to
 
 ## Push
 
-The `cloud push` command is the most common way to get local threat models into the cloud. It validates the HCL file, creates the threat model if needed, and uploads the content — all in one step.
+The `cloud push` command is the most common way to get local threat models into the cloud. It validates the HCL file, creates the threat model if needed, and uploads the content, all in one step.
 
 ```bash title="terminal"
 $ threatcl cloud push model.hcl
@@ -125,13 +126,14 @@ Uploading new version to threat model 'my-app'...
 
 #### Push options
 
-- `-no-create` — skip creating a new threat model if it doesn't exist; only upload to existing models
-- `-no-update-local` — don't update the local HCL file with cloud metadata after push
-- `-ignore-linked-controls` — skip validation of linked control references
+- `-no-create` - skip creating a new threat model if it doesn't exist; only upload to existing models
+- `-no-update-local` - don't update the local HCL file with cloud metadata after push
+- `-ignore-linked-controls` - skip validation of linked control references
+- `-with=<glob>` - parse the pushed file together with its sibling files as one set, running the server's whole-set validation locally first. See [multi-file models](#multi-file-models)
 
 ## Validate
 
-The `cloud validate` command validates an HCL file for cloud compatibility without uploading it. This checks for the presence of a `backend "threatcl-cloud"` block, verifies organization membership, and validates any library references.
+The `cloud validate` command validates an HCL file for cloud compatibility without uploading it. This checks that the file has exactly one `backend` block with `backend_name` set to `threatcl-cloud` and exactly one organization, that you are a member of that organization, and that the file parses as valid HCL.
 
 ```bash title="terminal"
 $ threatcl cloud validate model.hcl
@@ -139,7 +141,18 @@ $ threatcl cloud validate model.hcl
 ✓ 1 threat ref(s) validated (PUBLISHED)
 ```
 
+When the `backend` block names a `threatmodel` slug, the content is validated server-side as well. That catches collisions only the server can see, such as a control name that only collides once a cloud `ref` is enriched from the library. An unreachable validate endpoint is a warning, not a failure.
+
 This is useful for CI/CD pipelines or pre-push checks. See the [Cloud Overview](/cloud/overview/) for details on the `backend` block.
+
+#### Validate options
+
+- `-diff` - when the local file doesn't match the latest cloud version, download that version and print a summary of the semantic differences, followed by a unified, git-style diff
+- `-with=<glob>` - parse the validated file together with its sibling files as one set, running the server's whole-set validation locally first. See [multi-file models](#multi-file-models)
+
+```bash title="terminal"
+$ threatcl cloud validate -diff model.hcl
+```
 
 ## View
 
@@ -189,7 +202,63 @@ $ threatcl cloud view -model-id=my-threat-model -org-id=<orgId>
 
 #### View options
 
-- `-model-id` — fetch and view a threat model from Threatcl Cloud by ID or slug. When set, the `<file>` argument is not required.
-- `-org-id` — organization ID to use with `-model-id`. If not provided, uses the `THREATCL_CLOUD_ORG` env var or the default from your token store.
-- `-raw` — output raw markdown instead of the formatted display
-- `-ignore-linked-controls` — skip resolving linked control references from the cloud library
+- `-model-id` - fetch and view a threat model from Threatcl Cloud by ID or slug. When set, the `<file>` argument is not required.
+- `-org-id` - organization ID to use with `-model-id`. If not provided, uses the `THREATCL_CLOUD_ORG` env var or the default from your token store.
+- `-raw` - output raw markdown instead of the formatted display
+- `-ignore-linked-controls` - skip resolving linked control references from the cloud library
+
+## Export
+
+The `cloud export` command exports a threat model from Threatcl Cloud with every library reference resolved.
+
+Unlike `cloud threatmodel -download`, which writes the raw HCL stored in the cloud, this fetches each referenced threat, control and information asset from the cloud library and inlines its description, STRIDE, impacts, implementation guidance, risk reduction, information classification and source before rendering. The result is a standalone, portable artifact, suitable for sharing with reviewers who can't reach the cloud library.
+
+```bash title="terminal"
+$ threatcl cloud export -model-id=my-app -format=md -output=my-app.md
+```
+
+#### Export options
+
+- `-model-id` - **required**. The threat model ID or slug to export
+- `-format` - the output format. One of `json` (the default), `otm`, `hcl` or `md`
+- `-output` - write to a file instead of STDOUT
+- `-template` - an overridden template file to use for `md` output
+- `-overwrite` - overwrite the output file if it already exists
+- `-keep-backend` - preserve the `backend "threatcl-cloud"` block in the output. By default it is stripped, so the export is portable
+- `-include-recommended` - pull each referenced threat's library-recommended controls into the exported model. Off by default
+- `-org-id` - the organization to export from
+
+## Multi-file models
+
+A cloud threat model can be split across several files, keyed by each file's threatmodel [id](/specification/threatmodel/#id):
+
+- The file declaring the un-dotted root id, such as `id = "app"`, is the model's default file.
+- Each additional file declares a dotted id beneath it, such as `id = "app.frontend"`, and typically extends the root.
+- Every file's `backend` block must address the same organization and threat model.
+
+The `backend` block's `segment` attribute from earlier specs no longer exists. The threatmodel `id` alone keys each file.
+
+Push the root file first, then its children:
+
+```bash title="terminal"
+$ threatcl cloud push app.hcl
+$ threatcl cloud push app-frontend.hcl
+```
+
+Each file is parsed on its own terms, so a child whose `extends` target lives in another file won't fail locally. The server validates the assembled set and stays authoritative. `cloud push` will refuse to create a new cloud model from a file that looks like a child segment, so push the root first.
+
+This applies to every cloud parse path: `cloud push`, `cloud upload`, `cloud create -upload`, `cloud validate`, `cloud validate -diff` and `cloud export`.
+
+### Checking the whole set locally
+
+Before contacting the server, `cloud push` and `cloud validate` can parse the target file together with its siblings and run the same whole-set validation the server applies: extends resolution, name and id uniqueness, reserved namespace segments, one un-dotted root id with its children beneath it, and backend block agreement.
+
+```bash title="terminal"
+$ threatcl cloud validate -with='models/*.hcl' models/app-frontend.hcl
+```
+
+A preflight failure exits non-zero before any network call is made. See [Multiple Files](/specification/multi-file/) for the underlying set parsing rules.
+
+### Diffing a single segment
+
+For one segment of a multi-file model, `cloud validate -diff` compares that file against its own segment in the cloud, shown in the diff header as `cloud/<model>#<segment>`, rather than against the model's default segment. When the segment can't be resolved, the diff is skipped with a warning instead of being run against the wrong baseline.

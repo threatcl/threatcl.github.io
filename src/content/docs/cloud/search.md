@@ -39,19 +39,19 @@ Threat: Crown Theft
 
 ### Filtering threats
 
-- `-impacts` — filter by impact types (comma-separated)
+- `-impacts`: filter by impact types (comma-separated)
 
 ```bash title="terminal"
 $ threatcl cloud search -type=threats -impacts=Confidentiality,Integrity
 ```
 
-- `-stride` — filter by STRIDE categories (comma-separated)
+- `-stride`: filter by STRIDE categories (comma-separated)
 
 ```bash title="terminal"
 $ threatcl cloud search -type=threats -stride=Spoofing,Tampering
 ```
 
-- `-has-controls` — filter threats that have (or don't have) controls
+- `-has-controls`: filter threats that have (or don't have) controls
 
 ```bash title="terminal"
 # Threats with controls
@@ -90,7 +90,7 @@ Control: AWS Orgs
 
 ### Filtering controls
 
-- `-implemented` — filter by implementation status
+- `-implemented`: filter by implementation status
 
 ```bash title="terminal"
 # Only implemented controls
@@ -100,17 +100,25 @@ $ threatcl cloud search -type=controls -implemented
 $ threatcl cloud search -type=controls -implemented=false
 ```
 
+### Free-text search
+
+- `-term`: match on name and description, case-insensitive. Works for both threats and controls
+
+```bash title="terminal"
+$ threatcl cloud search -type=controls -term=encryption
+```
+
 ## Scoping
 
 By default, search operates across all threat models in your default organization. You can scope the search further:
 
-- `-threatmodel-id` — search within a specific threat model
+- `-threatmodel-id`: search within a specific threat model
 
 ```bash title="terminal"
 $ threatcl cloud search -type=threats -threatmodel-id=tm_abc123
 ```
 
-- `-org-id` — search within a specific organization (if you belong to multiple)
+- `-org-id`: search within a specific organization (if you belong to multiple)
 
 ```bash title="terminal"
 $ threatcl cloud search -type=threats -org-id=org_xyz789
