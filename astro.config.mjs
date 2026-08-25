@@ -39,6 +39,7 @@ export default defineConfig({
           items: [
             { label: 'CI/CD Overview', link: '/cicd/overview/' },
             { label: 'GitHub Actions', link: '/cicd/github/' },
+            { label: 'Drift Reviews', link: '/cicd/drift/' },
           ],
         },
         {
@@ -57,6 +58,7 @@ export default defineConfig({
             { label: 'Search', link: '/cloud/search/' },
             { label: 'Libraries', link: '/cloud/library/' },
             { label: 'Policies', link: '/cloud/policies/' },
+            { label: 'Claude Code Plugin', link: '/cloud/claude-plugin/' },
           ],
         },
 			],
